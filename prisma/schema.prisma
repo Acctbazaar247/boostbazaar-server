@@ -1,0 +1,510 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  user
+  admin
+  seller
+  superAdmin
+  prAdmin
+  ccAdmin
+  financeAdmin
+}
+
+model User {
+  id                  String              @id @default(uuid())
+  name                String
+  email               String              @unique
+  password            String
+  phoneNumber         String?
+  userName            String?
+  shouldSendEmail     Boolean             @default(true)
+  txId                String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  role                UserRole            @default(user)
+  profileImg          String?             @default("/assets/demo-user.png")
+  isVerified          Boolean             @default(false)
+  isApprovedForSeller Boolean             @default(false)
+  isVerifiedByAdmin   Boolean?
+  isBlocked           Boolean?
+  isPaidForSeller     Boolean?
+  withdrawalPin       String?
+  country             String?
+  state               String?
+  city                String?
+  address             String?
+  dateOfBirth         DateTime?
+  failedLoginAttempt  Int?                @default(0)
+  payWith             EPayWith?
+  Account             Account[]
+  Orders              Orders[]
+  Cart                Cart[]
+  Currency            Currency?
+  CurrencyRequest     CurrencyRequest[]
+  WithdrawalRequest   WithdrawalRequest[]
+  VerificationOtp     VerificationOtp[]
+  Message             Message[]
+  SeenMessage         SeenMessage[]
+  Notifications       Notifications[]
+  Kyc                 Kyc?
+  Plan                Plan?
+  Referral            Referral?           @relation(name: "Referral_OwnBy")
+  ReferredByMe        Referral[]          @relation(name: "Referral_By")
+  Review              Review[]            @relation(name: "Review_By")
+  ReviewSeller        Review[]            @relation(name: "Review_Seller_Info")
+  ReviewReply         ReviewReply[]
+}
+
+enum EPayWith {
+  paystack
+  nowpay
+  wallet
+}
+
+model VerificationOtp {
+  id        String           @id @default(uuid())
+  type      EVerificationOtp
+  otp       Int
+  createdAt DateTime         @default(now())
+  ownById   String
+  ownBy     User             @relation(fields: [ownById], references: [id], onDelete: Cascade)
+}
+
+enum EVerificationOtp {
+  createUser
+  forgotPassword
+  withdrawalPin
+}
+
+enum accountCategory {
+  // Social media accounts
+  Facebook
+  Twitter
+  Instagram
+  LinkedIn
+  Pinterest
+  Snapchat
+  TikTok
+  Threads
+  Tinder
+  Bumble
+  Reddit
+  Discord
+  Pof
+  Hinge
+  // new social media
+  Grindr
+  Viber
+  GMX
+  Quora
+  Match
+  Ourtime
+  Hellotalk
+  Zoosk
+  Okcupid
+  SMSmode
+
+  // Gaming accounts
+  Playstation
+  CallOfDuty
+  Pubg
+  Steam
+  Gta
+  Fortnite
+  Epic
+  Signal
+  // Email and messaging accounts
+  Gmail
+  Ymail
+  Hotmail
+  MailRu
+  Outlook
+  Whatsapp
+  GoogleVoice
+  Telegram
+  WeChat
+  TextNow
+  TextPlus
+
+  // VPN accounts
+  Windscribe
+  Nord
+  Vpn911
+  Pia
+  Express
+  IpVanish
+  CyberGhost
+  Private
+  Total
+  //new vpn
+  Surfshark
+
+  //E commerse 
+  Aliexpress
+  Alibaba
+  Amazon
+  Shopify
+  Ebay
+
+  //Accounts & Subscriptions Streaming and entertainment accounts
+  Netflix
+  Apple
+  TrustWallet
+  Prime
+  AmazonPrimeVideos
+  AppleMusic
+  AppleTv
+  Spotify
+  Audiomack
+  YouTube
+  GitHub
+  Canva
+  ChatGPT
+  Office365
+  Paypal
+  // Gift card accounts
+  AmazonGiftCard
+  AmexGiftCard
+  EbayGiftCard
+  GooglePlayGiftCard
+  NikeGiftCard
+  NordStromGiftCard
+  PlaystationGiftCard
+  SephoraGiftCard
+  SteamGiftCard
+
+  // websites
+  Website
+  CryptoWebsite
+  OnlyFans
+
+  // Tools and Resources
+  Tickets
+  Tutorials
+  Formats
+  Accounts
+  CreditCards
+  Software
+  Logs
+  Tools
+  Delivery
+  // Other types of accounts
+  Other
+  //previous
+  //   // social
+  //   Facebook
+  //   Twitter
+  //   Instagram
+  //   LinkedIn
+  //   Pinterest
+  //   Snapchat
+  //   TikTok
+  //   YouTube
+  //   GoogleVoice
+  //   Threads
+  //   Telegram
+  //   Whatsapp
+  //   Tinder
+  //   Bumble
+  //   Reddit
+  //   Discord
+  // // gaming
+  //   Playstation
+  //   CallOfDuty
+  //   Pubg
+  //   Steam
+  //   Gta
+  //   Fortnite
+  //   Epic
+  //   // gmail and messing
+  //   Gmail
+  //   Ymail
+  //   Hotmail
+  //   MailRu
+  //   Outlook
+  //   Windscribe
+  //   Nord
+  //   Vpn911
+  //   Other
+  //   Netflix
+  //   Apple
+  //   TrustWallet
+  //   AmazonPrimeVideos
+  //   // gift cards
+  //   AmazonGiftCard
+  //   AmexGiftCard
+  //   EbayGiftCard
+  //   GooglePlayGiftCard
+  //   NikeGiftCard
+  //   NordStromGiftCard
+  //   PlaystationGiftCard
+  //   SephoraGiftCard
+  //   SteamGiftCard
+}
+
+enum accountType {
+  SocialMedia
+  Game
+  Email
+  Vpn
+  GiftCard
+  ECommerce
+  AccountsSubscriptions
+  Websites
+  ToolsAndResources
+  Other
+}
+
+enum EApprovedForSale {
+  pending
+  approved
+  denied
+}
+
+model Account {
+  id                    String           @id @unique @default(uuid())
+  name                  String
+  description           String
+  price                 Float
+  username              String
+  password              String
+  preview               String?
+  additionalEmail       String?
+  additionalPassword    String?
+  additionalDescription String?
+  additionalImage       String?
+  messageFromAdmin      String?
+  category              accountCategory
+  accountType           accountType      @default(SocialMedia)
+  approvedForSale       EApprovedForSale @default(pending)
+  createdAt             DateTime         @default(now())
+  updatedAt             DateTime         @updatedAt
+  ownById               String
+  ownBy                 User             @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  isSold                Boolean          @default(false)
+  Cart                  Cart[]
+  Orders                Orders?
+  Review                Review?
+}
+
+model Orders {
+  id          String        @id @unique @default(uuid())
+  accountId   String        @unique
+  account     Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  orderById   String
+  orderBy     User          @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  status      EOrderStatus? @default(completed)
+  Message     Message[]
+  SeenMessage SeenMessage[]
+}
+
+enum EOrderStatus {
+  pending
+  completed
+  cancelled
+}
+
+model Cart {
+  id        String   @id @unique @default(uuid())
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  ownById   String
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Currency {
+  id        String   @id @unique @default(uuid())
+  amount    Float    @default(0)
+  ownById   String   @unique
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CurrencyRequest {
+  id            String                   @id @unique @default(uuid())
+  message       String
+  amount        Float
+  ownById       String
+  status        EStatusOfCurrencyRequest @default(pending)
+  paymentStatus String                   @default("waiting")
+  ownBy         User                     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+}
+
+enum EStatusOfCurrencyRequest {
+  pending
+  approved
+  denied
+}
+
+enum EStatusOfWithdrawalRequest {
+  pending
+  approved
+  denied
+}
+
+model WithdrawalRequest {
+  id            String                     @id @unique @default(uuid())
+  message       String?
+  amount        Float
+  ownById       String
+  status        EStatusOfWithdrawalRequest @default(pending)
+  fullName      String?
+  accountNumber String?
+  bankName      String?
+  walletAddress String?
+  isTrc         Boolean?
+  ownBy         User                       @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt     DateTime                   @default(now())
+  updatedAt     DateTime                   @updatedAt
+}
+
+model Message {
+  id      String  @id @unique @default(uuid())
+  orderId String
+  order   Orders  @relation(fields: [orderId], references: [id])
+  text    String?
+  image   String?
+
+  sendById  String
+  sendBy    User     @relation(fields: [sendById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SeenMessage {
+  id        String   @id @unique @default(uuid())
+  orderId   String
+  order     Orders   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  seenById  String
+  seenBy    User     @relation(fields: [seenById], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  lastSeen  DateTime
+}
+
+model Notifications {
+  id        String   @id @unique @default(uuid())
+  title     String
+  message   String
+  link      String?
+  isSeen    Boolean  @default(false)
+  ownById   String
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// new updated content!
+model Kyc {
+  id                        String       @id @unique @default(uuid())
+  ownById                   String       @unique
+  ownBy                     User         @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  userName                  String
+  name                      String?
+  phoneNumber               String?
+  country                   String
+  state                     String
+  address                   String
+  city                      String
+  birthDate                 DateTime
+  meansOfIdentification     String
+  identificationNumber      String
+  identificationExpiredDate DateTime?
+  identityImage             String
+  messageByAdmin            String?
+  whatsAppNumber            String?
+  telegramNumber            String?
+  status                    EStatusOfKyc @default(pending)
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+}
+
+enum EStatusOfKyc {
+  pending
+  approved
+  denied
+}
+
+model Plan {
+  id        String    @id @unique @default(uuid())
+  ownById   String    @unique
+  ownBy     User      @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  isActive  Boolean   @default(true)
+  planType  EPlanType
+  limit     Int
+  days      Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum EPlanType {
+  basic
+  pro
+  proPlus
+}
+
+model Referral {
+  id      String @id @unique @default(uuid())
+  ownById String @unique
+  ownBy   User   @relation(name: "Referral_OwnBy", fields: [ownById], references: [id], onDelete: Cascade)
+
+  referralById String
+  referralBy   User   @relation(name: "Referral_By", fields: [referralById], references: [id], onDelete: Cascade)
+
+  status EReferralStatus
+  amount Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum EReferralStatus {
+  pending
+  completed
+  cancel
+}
+
+model Review {
+  id           String        @id @unique @default(uuid())
+  accountId    String        @unique
+  account      Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  ownById      String
+  ownBy        User          @relation(name: "Review_By", fields: [ownById], references: [id], onDelete: Cascade)
+  sellerId     String
+  seller       User          @relation(name: "Review_Seller_Info", fields: [sellerId], references: [id], onDelete: Cascade)
+  reviewStatus EReviewStatus
+  reviewText   String
+  isAnonymous  Boolean       @default(false)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  ReviewReply  ReviewReply[]
+}
+
+model ReviewReply {
+  id        String   @id @unique @default(uuid())
+  reviewId  String
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  ownById   String
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  reply     String
+  createdAt DateTime @default(now())
+}
+
+enum EReviewStatus {
+  positive
+  negative
+}
