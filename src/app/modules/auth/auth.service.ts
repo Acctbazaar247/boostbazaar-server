@@ -1,5 +1,4 @@
 import {
-  EPayWith,
   EReferralStatus,
   EVerificationOtp,
   User,
@@ -11,11 +10,8 @@ import { Secret } from 'jsonwebtoken';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import createBycryptPassword from '../../../helpers/createBycryptPassword';
-import generateFlutterWavePaymentURL from '../../../helpers/createFlutterWaveInvoice';
-import createNowPayInvoice from '../../../helpers/creeateInvoice';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import sendEmail from '../../../helpers/sendEmail';
-import { EPaymentType } from '../../../interfaces/common';
 import EmailTemplates from '../../../shared/EmailTemplates';
 import { checkTimeOfOTP, generateOtp } from '../../../shared/generateOTP';
 import prisma from '../../../shared/prisma';
@@ -283,171 +279,6 @@ const sendForgotEmail = async (
     otp,
   };
 };
-const sendWithdrawalTokenEmail = async (
-  id: string
-): Promise<{ otp: number }> => {
-  const isUserExist = await prisma.user.findUnique({
-    where: { id: id },
-  });
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  const otp = generateOtp();
-  //create access token & refresh token
-  const { email } = isUserExist;
-
-  const verificationOtp = await prisma.$transaction(async tx => {
-    await tx.verificationOtp.deleteMany({
-      where: { ownById: isUserExist.id },
-    });
-    return await tx.verificationOtp.create({
-      data: {
-        ownById: isUserExist.id,
-        otp: otp,
-        type: EVerificationOtp.withdrawalPin,
-      },
-    });
-  });
-  if (!verificationOtp.id) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'Cannot create verification Otp'
-    );
-  }
-  await sendEmail(
-    { to: email },
-    {
-      subject: EmailTemplates.verify.subject,
-      html: EmailTemplates.verify.html({ token: otp }),
-    }
-  );
-  return {
-    otp,
-  };
-};
-const becomeSeller = async (
-  id: string,
-  payType: EPayWith
-): Promise<{ txId: string }> => {
-  console.log(payType);
-  const isUserExist = await prisma.user.findUnique({
-    where: { id },
-  });
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  // is already payed
-  if (isUserExist.isPaidForSeller) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Already paid');
-  }
-  let txId;
-  if (payType === EPayWith.paystack) {
-    // pay stack
-    // const uid = generateUniqueId({ length: 20 });
-    // const request = await initiatePayment(
-    //   config.sellerOneTimePayment,
-    //   isUserExist.email,
-    //   uid,
-    //   EPaymentType.seller,
-    //   isUserExist.id,
-    //   config.frontendUrl + `/account/sell-your-account`
-    // );
-    const fluterWave = await generateFlutterWavePaymentURL({
-      amount: config.sellerOneTimePayment,
-      customer_email: isUserExist.email,
-      redirect_url: config.frontendUrl + `/account/sell-your-account`,
-      tx_ref: isUserExist.id,
-      paymentType: EPaymentType.seller,
-    });
-    console.log({ fluterWave });
-    txId = fluterWave;
-  } else {
-    const data = await createNowPayInvoice({
-      price_amount: config.sellerOneTimePayment,
-      order_id: isUserExist.id,
-      ipn_callback_url: '/users/nowpayments-ipn',
-      order_description: 'Creating Seller Account',
-      success_url: config.frontendUrl + `/account/sell-your-account`,
-      cancel_url: config.frontendUrl || '',
-    });
-    txId = data.invoice_url;
-  }
-  await prisma.user.update({ where: { id }, data: { txId, payWith: payType } });
-  console.log(txId);
-  return {
-    txId,
-  };
-};
-const becomeSellerWithWallet = async (
-  id: string,
-  payType: EPayWith
-): Promise<{ isSeller: boolean }> => {
-  console.log(payType);
-  const isUserExist = await prisma.user.findUnique({
-    where: { id },
-    include: {
-      Currency: true,
-    },
-  });
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
-  }
-  // is already payed
-  if (isUserExist.isPaidForSeller) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Already paid');
-  }
-  // does he has enough wallet
-  if (!isUserExist.Currency) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Currency not found!');
-  }
-  if (config.sellerOneTimePayment > isUserExist.Currency.amount) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'Not enough money left on your wallet'
-    );
-  }
-  const admin = await prisma.user.findUnique({
-    where: { role: 'superAdmin', email: config.mainAdminEmail },
-    select: { id: true },
-  });
-  if (!admin) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Admin not found!');
-  }
-  // already have everything
-  await prisma.$transaction(async tx => {
-    // cut money and add to admin
-    const updateCurrency = await tx.currency.update({
-      where: { ownById: id },
-      data: {
-        amount: { decrement: config.sellerOneTimePayment },
-      },
-    });
-    if (0 > updateCurrency.amount) {
-      throw new ApiError(
-        httpStatus.BAD_REQUEST,
-        'Something went wrong trying again latter'
-      );
-    }
-    // add money to admin
-
-    await tx.currency.update({
-      where: { ownById: admin.id },
-      data: { amount: { increment: config.sellerOneTimePayment } },
-    });
-    await tx.user.update({
-      where: { id },
-      data: {
-        role: 'seller',
-        payWith: EPayWith.wallet,
-        isPaidForSeller: true,
-        isApprovedForSeller: true,
-      },
-    });
-  });
-  return {
-    isSeller: true,
-  };
-};
 const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   //verify to ken
   // invalid token - synchronous
@@ -692,121 +523,6 @@ const changePassword = async ({
   };
   // eslint-disable-next-line no-unused-vars
 };
-const changeWithdrawPin = async ({
-  prePassword,
-  newPassword,
-  id,
-  otp,
-}: {
-  prePassword: string | undefined;
-  newPassword: string;
-  id: string;
-  otp: number | undefined;
-}): Promise<{ success: boolean }> => {
-  // checking is user buyer
-  // check is token match and valid
-
-  const isUserExist = await prisma.user.findUnique({
-    where: { id },
-  });
-
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
-  }
-  if (!isUserExist.withdrawalPin) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Add a withdrawal pin fast');
-  }
-  const genarateBycryptPass = await createBycryptPassword(newPassword);
-  if (otp) {
-    const isTokenExit = await prisma.verificationOtp.findFirst({
-      where: {
-        ownById: isUserExist.id,
-        otp,
-        type: EVerificationOtp.withdrawalPin,
-      },
-    });
-
-    if (!isTokenExit) {
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'OTP is not match');
-    }
-    if (checkTimeOfOTP(isTokenExit.createdAt)) {
-      throw new ApiError(httpStatus.NOT_ACCEPTABLE, 'OPT is expired!');
-    }
-
-    const result = await prisma.$transaction(async tx => {
-      await tx.verificationOtp.deleteMany({
-        where: {
-          ownById: isUserExist.id,
-        },
-      });
-      return await tx.user.update({
-        where: { id: isUserExist.id },
-        data: { withdrawalPin: genarateBycryptPass },
-      });
-    });
-    if (!result) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
-    }
-  } else {
-    // check pin is match
-    if (!prePassword) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'prePassword is required');
-    }
-    const isMatch = await bcryptjs.compare(
-      prePassword,
-      isUserExist.withdrawalPin
-    );
-    if (!isMatch) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Password dose not match!');
-    }
-    // match let change the passwrod
-    const result = await prisma.user.update({
-      where: { id },
-      data: { withdrawalPin: genarateBycryptPass },
-    });
-    if (!result) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
-    }
-  }
-
-  return {
-    success: true,
-  };
-  // eslint-disable-next-line no-unused-vars
-};
-const addWithdrawalPasswordFirstTime = async ({
-  password,
-  userId,
-}: {
-  password: string;
-  userId: string;
-}): Promise<{ password: string }> => {
-  // checking is user buyer
-
-  const genarateBycryptPass = await createBycryptPassword(password);
-
-  const isUserExist = await prisma.user.findUnique({
-    where: { id: userId },
-  });
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'User not found');
-  }
-  if (isUserExist.withdrawalPin) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Password already exits!');
-  }
-  const result = await prisma.user.update({
-    where: { id: isUserExist.id },
-    data: { withdrawalPin: genarateBycryptPass },
-  });
-  if (!result) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
-  }
-
-  return {
-    password: genarateBycryptPass,
-  };
-  // eslint-disable-next-line no-unused-vars
-};
 
 export const AuthService = {
   createUser,
@@ -817,9 +533,4 @@ export const AuthService = {
   verifyForgotToken,
   changePassword,
   sendForgotEmail,
-  becomeSeller,
-  addWithdrawalPasswordFirstTime,
-  sendWithdrawalTokenEmail,
-  changeWithdrawPin,
-  becomeSellerWithWallet,
 };

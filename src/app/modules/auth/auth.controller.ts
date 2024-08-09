@@ -168,21 +168,6 @@ const verifyForgotToken = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const sendWithdrawalTokenEmail = catchAsync(
-  async (req: Request, res: Response) => {
-    const user = req.user as JwtPayload;
-    const result = await AuthService.sendWithdrawalTokenEmail(user.userId);
-
-    // set refresh token
-
-    sendResponse<{ otp: number }>(res, {
-      statusCode: 200,
-      success: true,
-      message: 'Token  send successfully',
-      data: result,
-    });
-  }
-);
 const sendForgotEmail: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { email } = req.params;
@@ -202,37 +187,6 @@ const sendForgotEmail: RequestHandler = catchAsync(
       data: {
         otp: 'Opt send successfully',
       },
-    });
-  }
-);
-const becomeSeller: RequestHandler = catchAsync(
-  async (req: Request, res: Response) => {
-    const user = req.user as JwtPayload;
-    const { payWith } = req.body;
-    const output = await AuthService.becomeSeller(user.userId, payWith);
-
-    sendResponse<{ txId: string }>(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'url successfully generate',
-      data: output,
-    });
-  }
-);
-const becomeSellerWithWallet: RequestHandler = catchAsync(
-  async (req: Request, res: Response) => {
-    const user = req.user as JwtPayload;
-    const { payWith } = req.body;
-    const output = await AuthService.becomeSellerWithWallet(
-      user.userId,
-      payWith
-    );
-
-    sendResponse<{ isSeller: boolean }>(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'successfully become a seller',
-      data: output,
     });
   }
 );
@@ -257,39 +211,6 @@ const changePassword: RequestHandler = catchAsync(
     });
   }
 );
-const changeWithdrawPin: RequestHandler = catchAsync(
-  async (req: Request, res: Response) => {
-    const data = req.body;
-    const user = req.user as JwtPayload;
-    const output = await AuthService.changeWithdrawPin({
-      ...data,
-      id: user.userId,
-    });
-
-    sendResponse<{ success: boolean }>(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'password change successfully!',
-      data: output,
-    });
-  }
-);
-const addWithdrawalPasswordFirstTime: RequestHandler = catchAsync(
-  async (req: Request, res: Response) => {
-    const data = req.body;
-    const user = req.user as JwtPayload;
-    const output = await AuthService.addWithdrawalPasswordFirstTime({
-      password: data.password,
-      userId: user.userId,
-    });
-    sendResponse<{ password: string }>(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'password change successfully!',
-      data: output,
-    });
-  }
-);
 export const AuthController = {
   createUser,
   loginUser,
@@ -299,9 +220,4 @@ export const AuthController = {
   verifyForgotToken,
   changePassword,
   sendForgotEmail,
-  becomeSeller,
-  addWithdrawalPasswordFirstTime,
-  sendWithdrawalTokenEmail,
-  changeWithdrawPin,
-  becomeSellerWithWallet,
 };

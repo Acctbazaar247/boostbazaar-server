@@ -58,33 +58,4 @@ router.post(
   validateRequest(AuthValidation.changePassword),
   AuthController.changePassword
 );
-router.post(
-  '/add-withdrawal-password-first-time',
-  validateRequest(AuthValidation.addWithdrawalPasswordFirstTime),
-  auth(UserRole.seller, UserRole.user, UserRole.superAdmin, UserRole.admin),
-  AuthController.addWithdrawalPasswordFirstTime
-);
-router.post(
-  '/change-withdrawal-password',
-  validateRequest(AuthValidation.changeWithdrawPin),
-  auth(UserRole.seller, UserRole.user, UserRole.superAdmin, UserRole.admin),
-  AuthController.changeWithdrawPin
-);
-router.post(
-  '/send-withdrawal-password-forgot-token',
-  auth(UserRole.seller),
-  AuthController.sendWithdrawalTokenEmail
-);
-router.post('/send-forgot-email/:email', AuthController.sendForgotEmail);
-router.post(
-  '/become-seller',
-  validateRequest(AuthValidation.becomeSeller),
-  auth(UserRole.user),
-  AuthController.becomeSeller
-);
-router.post(
-  '/become-seller-with-wallet',
-  auth(UserRole.user),
-  AuthController.becomeSellerWithWallet
-);
 export const AuthRoutes = router;

@@ -1,9 +1,9 @@
 import { Server } from 'http';
+import app from './app';
 import config from './config';
-import socketServer from './socket';
 
 async function bootstrap() {
-  const server: Server = socketServer.listen(config.port, () => {
+  const server: Server = app.listen(config.port, () => {
     console.log(`Server running on port ${config.port}`);
   });
 
