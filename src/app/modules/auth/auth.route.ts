@@ -24,28 +24,12 @@ router.post(
 router.post(
   '/verify-signup-token',
   validateRequest(AuthValidation.verifyToken),
-  auth(
-    UserRole.admin,
-    UserRole.superAdmin,
-    UserRole.seller,
-    UserRole.user,
-    UserRole.prAdmin,
-    UserRole.ccAdmin,
-    UserRole.financeAdmin
-  ),
+  auth(UserRole.admin, UserRole.user),
   AuthController.verifySignupToken
 );
 router.post(
   '/resend/:email',
-  auth(
-    UserRole.admin,
-    UserRole.superAdmin,
-    UserRole.seller,
-    UserRole.user,
-    UserRole.prAdmin,
-    UserRole.ccAdmin,
-    UserRole.financeAdmin
-  ),
+  auth(UserRole.admin, UserRole.user),
   AuthController.resendEmail
 );
 router.post(

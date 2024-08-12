@@ -2,8 +2,10 @@ import { Prisma, Referral } from '@prisma/client';
 import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
+import sendEmail from '../../../helpers/sendEmail';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
 import { referralSearchableFields } from './referral.constant';
 import { IReferralFilters } from './referral.interface';
@@ -123,11 +125,32 @@ const deleteReferral = async (id: string): Promise<Referral | null> => {
   }
   return result;
 };
-
+const sendReferralEmail = async (
+  userId: string,
+  sendTo: string
+): Promise<{ isSend: boolean }> => {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user?.id) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'user not found');
+  }
+  await sendEmail(
+    { to: sendTo },
+    {
+      subject: `${user.name} Invites You to BoostBazaar`,
+      html: EmailTemplates.sendReferral.html({
+        link: `auth/sign-up?referralId=${userId}`,
+      }),
+    }
+  );
+  return {
+    isSend: true,
+  };
+};
 export const ReferralService = {
   getAllReferral,
   createReferral,
   updateReferral,
   getSingleReferral,
   deleteReferral,
+  sendReferralEmail,
 };

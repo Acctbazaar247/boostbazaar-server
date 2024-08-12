@@ -59,7 +59,7 @@ const createUser = async (user: RefUser): Promise<ILoginResponse> => {
       let role: UserRole = UserRole.user;
       //gard for making super admin
       if (user?.email === config.mainAdminEmail) {
-        role = UserRole.superAdmin;
+        role = UserRole.admin;
       }
 
       const newUserInfo = await tx.user.create({
@@ -68,8 +68,6 @@ const createUser = async (user: RefUser): Promise<ILoginResponse> => {
           ...rest,
           role,
           isVerified: false,
-          isApprovedForSeller: false,
-          isVerifiedByAdmin: false,
         },
       });
       await tx.currency.create({
@@ -145,11 +143,6 @@ const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
       httpStatus.FORBIDDEN,
       "We noticed several attempts to access this account with an incorrect password. To protect your information, this account has been locked. Please reset your password using the 'Forgot Password' for enhanced security. "
     );
-  }
-  if (isUserExist.role === UserRole.seller) {
-    if (isUserExist.isApprovedForSeller === false) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Seller does not exits');
-    }
   }
   if (
     isUserExist.password &&

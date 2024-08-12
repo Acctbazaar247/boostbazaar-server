@@ -909,5 +909,82 @@ const EmailTemplates = {
 
     `,
   },
+  sendReferral: {
+    html: (data: { link: string }) => ` 
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seller Requested</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .content {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .seller-info {
+      margin-top: 5px;
+    }
+
+    .transaction-id {
+      font-weight: bold;
+    }
+
+    .visit-site-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 8px 20px;
+      background-color: #2563eb;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1> Hi there! </h1>
+    </div>  
+    <div class="content">
+      <p class="seller-info">
+      
+      Join   on BoostBazaar to enhance your social media presence effortlessly. BoostBazaar offers powerful tools and services to help you grow your online following, engage with your audience, and achieve your digital marketing goals. Let’s start boosting your success today!
+      </p>  
+      <a href="${
+        config.frontendUrl + data.link
+      }" style="color:#fff" class="visit-site-button">Visit site</a>
+    </div>
+  </div>
+</body>
+</html>
+    
+    `,
+  },
 };
 export default EmailTemplates;

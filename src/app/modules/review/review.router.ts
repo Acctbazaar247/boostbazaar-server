@@ -6,51 +6,22 @@ import { ReviewController } from './review.controller';
 import { ReviewValidation } from './review.validation';
 const router = express.Router();
 
-router.get(
-  '/',
-  auth(
-    UserRole.admin,
-    UserRole.superAdmin,
-    UserRole.prAdmin,
-    UserRole.financeAdmin,
-    UserRole.user,
-    UserRole.seller,
-    UserRole.ccAdmin
-  ),
-  ReviewController.getAllReview
-);
-router.get(
-  '/:id',
-  auth(
-    UserRole.admin,
-    UserRole.superAdmin,
-    UserRole.prAdmin,
-    UserRole.financeAdmin,
-    UserRole.user,
-    UserRole.seller,
-    UserRole.ccAdmin
-  ),
-  ReviewController.getSingleReview
-);
+router.get('/', ReviewController.getAllReview);
+router.get('/:id', ReviewController.getSingleReview);
 
 router.post(
   '/',
+  auth(UserRole.admin, UserRole.user),
   validateRequest(ReviewValidation.createValidation),
-  auth(UserRole.seller, UserRole.user),
   ReviewController.createReview
 );
-router.post(
-  '/add-reply',
-  validateRequest(ReviewValidation.createReplyValidation),
-  auth(UserRole.seller, UserRole.user),
-  ReviewController.createReviewReply
-);
 
-// router.patch(
-//   '/:id',
-//   validateRequest(ReviewValidation.updateValidation),
-//   ReviewController.updateReview
-// );
+router.patch(
+  '/:id',
+  auth(UserRole.user),
+  validateRequest(ReviewValidation.updateValidation),
+  ReviewController.updateReview
+);
 router.delete('/:id', ReviewController.deleteReview);
 
 export const ReviewRoutes = router;

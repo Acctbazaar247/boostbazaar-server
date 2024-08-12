@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(UserRole.admin, UserRole.seller, UserRole.user, UserRole.superAdmin),
+  auth(UserRole.admin, UserRole.user),
   CurrencyController.getAllCurrency
 );
 router.get(
   '/single-user-currency',
-  auth(UserRole.admin, UserRole.seller, UserRole.user, UserRole.superAdmin),
+  auth(UserRole.admin, UserRole.user),
   CurrencyController.getSingleCurrencyByUserId
 );
 // router.get('/:id', CurrencyController.getSingleCurrency);
@@ -26,7 +26,7 @@ router.post(
 
 router.patch(
   '/:id',
-  auth(UserRole.superAdmin, UserRole.financeAdmin),
+  auth(UserRole.admin),
   validateRequest(CurrencyValidation.updateValidation),
   CurrencyController.updateCurrency
 );

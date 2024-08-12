@@ -8,24 +8,12 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(
-    UserRole.admin,
-    UserRole.seller,
-    UserRole.user,
-    UserRole.superAdmin,
-    UserRole.financeAdmin
-  ),
+  auth(UserRole.admin, UserRole.user),
   CurrencyRequestController.getAllCurrencyRequest
 );
 router.get(
   '/:id',
-  auth(
-    UserRole.admin,
-    UserRole.seller,
-    UserRole.user,
-    UserRole.superAdmin,
-    UserRole.financeAdmin
-  ),
+  auth(UserRole.admin, UserRole.user),
   CurrencyRequestController.getSingleCurrencyRequest
 );
 
@@ -37,13 +25,13 @@ router.get(
 // );
 router.post(
   '/paystack',
-  auth(UserRole.seller, UserRole.user),
+  auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),
   CurrencyRequestController.createCurrencyRequestWithPayStack
 );
 router.post(
   '/',
-  auth(UserRole.seller, UserRole.user),
+  auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),
   CurrencyRequestController.createCurrencyRequestInvoice
 );
@@ -56,13 +44,13 @@ router.post(
 
 router.patch(
   '/:id',
-  auth(UserRole.superAdmin, UserRole.financeAdmin),
+  auth(UserRole.admin),
   validateRequest(CurrencyRequestValidation.updateValidation),
   CurrencyRequestController.updateCurrencyRequest
 );
 router.delete(
   '/:id',
-  auth(UserRole.superAdmin, UserRole.financeAdmin),
+  auth(UserRole.admin, UserRole.admin),
   CurrencyRequestController.deleteCurrencyRequest
 );
 

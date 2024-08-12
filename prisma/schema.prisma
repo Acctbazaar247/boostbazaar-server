@@ -33,6 +33,7 @@ model User {
   Referral        Referral?         @relation(name: "Referral_OwnBy")
   ReferredByMe    Referral[]        @relation(name: "Referral_By")
   Tickets         Tickets[]
+  Review          Review[]
 }
 
 enum EPayWith {
@@ -119,7 +120,7 @@ model Referral {
   referralById String
   referralBy   User   @relation(name: "Referral_By", fields: [referralById], references: [id], onDelete: Cascade)
 
-  status EReferralStatus
+  status EReferralStatus @default(pending)
   amount Int
 
   createdAt DateTime @default(now())
@@ -133,15 +134,29 @@ enum EReferralStatus {
 }
 
 model Tickets {
-  id      String   @id @unique @default(uuid())
-  ownById String
-  ownBy   User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
-  subject String
-  status  ETickets @default(open)
+  id        String   @id @unique @default(uuid())
+  ownById   String
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  subject   String
+  message   String
+  status    ETickets @default(open)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum ETickets {
   open
   closed
   sloved
+}
+
+model Review {
+  id        String   @id @unique @default(uuid())
+  ownById   String
+  ownBy     User     @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  title     String
+  review    String
+  star      Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -257,13 +257,17 @@ const updateCurrencyRequest = async (
         throw new ApiError(httpStatus.NOT_FOUND, 'User currency not found');
       }
       // update currency
-      const newAddedAmount = result.amount * config.currencyPerDollar;
+      const newAddedAmount = result.amount;
       const newAmount = previousCurrency.amount + newAddedAmount;
 
       // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
       const updateCurrency = await tx.currency.update({
         where: { ownById: result.ownById },
-        data: { amount: newAmount },
+        data: {
+          amount: {
+            increment: result.amount,
+          },
+        },
       });
       const queryUser = await prisma.user.findUnique({
         where: { id: queryData.ownById },

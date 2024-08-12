@@ -1,4 +1,4 @@
-import { Prisma, Review, ReviewReply } from '@prisma/client';
+import { Prisma, Review } from '@prisma/client';
 import httpStatus from 'http-status';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
@@ -61,38 +61,23 @@ const getAllReview = async (
           },
     select: {
       id: true,
-      accountId: true,
-      sellerId: true,
-      seller: {
-        select: { id: true, name: true, profileImg: true },
-      },
-      ownById: true,
-      createdAt: true,
-      updatedAt: true,
-      reviewText: true,
-      reviewStatus: true,
-      isAnonymous: true,
-      ReviewReply: {
+      ownBy: {
         select: {
+          name: true,
+          profileImg: true,
+          email: true,
           id: true,
-          reply: true,
-          ownById: true,
-          createdAt: true,
-          ownBy: {
-            select: {
-              name: true,
-              id: true,
-              profileImg: true,
-            },
-          },
         },
       },
-      ownBy: {
-        select: { id: true, email: true, profileImg: true, name: true },
-      },
+      ownById: true,
+      review: true,
+      title: true,
+      star: true,
+      createdAt: true,
+      updatedAt: true,
     },
   });
-  const total = await prisma.review.count();
+  const total = await prisma.review.count({ where: whereConditions });
   const output = {
     data: result,
     meta: { page, limit, total },
@@ -100,35 +85,8 @@ const getAllReview = async (
   return output;
 };
 
-const createReview = async (
-  payload: Review[]
-): Promise<Prisma.BatchPayload | null> => {
-  const newReview = await prisma.review.createMany({
-    data: payload,
-  });
-  return newReview;
-};
-const createReviewReply = async (
-  payload: ReviewReply
-): Promise<ReviewReply | null> => {
-  const isReviewExits = await prisma.review.findUnique({
-    where: { id: payload.reviewId },
-  });
-  if (!isReviewExits) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Review not found to reply');
-  }
-
-  // check the person is he relative to the conversation
-  const isNotSeller = isReviewExits.sellerId !== payload.ownById;
-  const isNotBuyer = isReviewExits.ownById !== payload.ownById;
-  if (isNotBuyer && isNotSeller) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'You are not allowed to reply on this conversation'
-    );
-  }
-
-  const newReview = await prisma.reviewReply.create({
+const createReview = async (payload: Review): Promise<Review | null> => {
+  const newReview = await prisma.review.create({
     data: payload,
   });
   return newReview;
@@ -172,5 +130,4 @@ export const ReviewService = {
   updateReview,
   getSingleReview,
   deleteReview,
-  createReviewReply,
 };

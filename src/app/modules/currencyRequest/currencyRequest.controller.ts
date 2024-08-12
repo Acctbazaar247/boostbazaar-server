@@ -5,7 +5,6 @@ import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../../../config';
 import { paginationFields } from '../../../constants/pagination';
-import UpdateSellerAfterPay from '../../../helpers/UpdateSellerAfterPay';
 import sendEmail from '../../../helpers/sendEmail';
 import { EPaymentType } from '../../../interfaces/common';
 import EmailTemplates from '../../../shared/EmailTemplates';
@@ -136,12 +135,6 @@ const payStackWebHook: RequestHandler = catchAsync(
       if (paymentType === EPaymentType.addFunds) {
         await CurrencyRequestService.payStackWebHook({
           data: ipnData,
-        });
-      } else if (paymentType === EPaymentType.seller) {
-        await UpdateSellerAfterPay({
-          order_id: ipnData?.txRef.split('_$_')[1],
-          payment_status: 'finished',
-          price_amount: config.sellerOneTimePayment,
         });
       }
     }

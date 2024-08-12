@@ -1,4 +1,4 @@
-import { EPayWith, UserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { z } from 'zod';
 
 const createAuthZodSchema = z.object({
@@ -7,8 +7,6 @@ const createAuthZodSchema = z.object({
     password: z.string({ required_error: 'Password is required' }).min(8),
     name: z.string({ required_error: 'Name is required' }),
     role: z.nativeEnum(UserRole).default(UserRole.user).optional(),
-    paymentWithPaystack: z.boolean().default(false).optional(),
-    txId: z.string({ required_error: 'txId is required' }).optional(),
     referralId: z
       .string({ required_error: 'referralId is required' })
       .optional(),
@@ -73,11 +71,6 @@ const addWithdrawalPasswordFirstTime = z.object({
       .max(4, { message: 'Password must be  4 characters long' }),
   }),
 });
-const becomeSeller = z.object({
-  body: z.object({
-    payWith: z.enum(Object.keys(EPayWith) as [string, ...string[]]),
-  }),
-});
 export const AuthValidation = {
   createAuthZodSchema,
   refreshTokenZodSchema,
@@ -86,6 +79,5 @@ export const AuthValidation = {
   changePassword,
   verifyForgotToken,
   addWithdrawalPasswordFirstTime,
-  becomeSeller,
   changeWithdrawPin,
 };

@@ -1,7 +1,6 @@
 import { Currency, Prisma } from '@prisma/client';
 import httpStatus from 'http-status';
 import { round } from 'lodash';
-import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../../interfaces/common';
@@ -130,10 +129,7 @@ const updateCurrency = async (
       },
     });
   } else if (amountToAdd < 0) {
-    const newAmount = round(
-      isCurrencyExits.amount + amountToAdd,
-      config.calculationMoneyRound
-    );
+    const newAmount = round(isCurrencyExits.amount + amountToAdd, 5);
     // if new amount is less then 0 then not allow
     if (newAmount < 0) {
       throw new ApiError(
