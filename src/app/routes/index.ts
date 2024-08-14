@@ -3,8 +3,6 @@ import { AuthRoutes } from '../modules/auth/auth.route';
 import { CurrencyRoutes } from '../modules/currency/currency.router';
 import { CurrencyRequestRoutes } from '../modules/currencyRequest/currencyRequest.router';
 import { fileUploadRoutes } from '../modules/fileUpload/fileUpload.route';
-import { NotificationsRoutes } from '../modules/notifications/notifications.router';
-import { OrdersRoutes } from '../modules/orders/orders.router';
 import { ProfileRoutes } from '../modules/profile/profile.router';
 import { ReferralRoutes } from '../modules/referral/referral.router';
 import { ReviewRoutes } from '../modules/review/review.router';
@@ -28,11 +26,6 @@ const moduleRoutes = [
   },
 
   {
-    path: '/order',
-    route: OrdersRoutes,
-  },
-
-  {
     path: '/currency',
     route: CurrencyRoutes,
   },
@@ -44,10 +37,7 @@ const moduleRoutes = [
     path: '/uploadImg',
     route: fileUploadRoutes,
   },
-  {
-    path: '/notification',
-    route: NotificationsRoutes,
-  },
+
   {
     path: '/referral',
     route: ReferralRoutes,

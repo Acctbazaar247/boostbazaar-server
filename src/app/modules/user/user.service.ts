@@ -1,32 +1,17 @@
-import {
-  EOrderStatus,
-  EReviewStatus,
-  Prisma,
-  User,
-  UserRole,
-} from '@prisma/client';
+import { Prisma, User, UserRole } from '@prisma/client';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
-import UpdateSellerAfterPay from '../../../helpers/UpdateSellerAfterPay';
-import checkUserUpdateTime from '../../../helpers/checkUserUpdateTime';
 import createBycryptPassword from '../../../helpers/createBycryptPassword';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
-import sendEmail from '../../../helpers/sendEmail';
-import {
-  IGenericResponse,
-  TAdminOverview,
-  TSellerOverview,
-  TUserOverview,
-} from '../../../interfaces/common';
+import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
-import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
 import { userSearchableFields } from './user.constant';
-import { IUserFilters, TSellerProfileInfo } from './user.interface';
+import { IUserFilters } from './user.interface';
 
 const getAllUser = async (
   filters: IUserFilters,
@@ -97,19 +82,7 @@ const getAllUser = async (
       createdAt: true,
       updatedAt: true,
       isBlocked: true,
-      isApprovedForSeller: true,
-      txId: true,
       shouldSendEmail: true,
-      phoneNumber: true,
-      isPaidForSeller: true,
-      isVerifiedByAdmin: true,
-      payWith: true,
-      city: true,
-      country: true,
-      state: true,
-      address: true,
-      dateOfBirth: true,
-      userName: true,
       Currency: {
         select: {
           amount: true,
@@ -149,12 +122,12 @@ const sellerIpn = async (data: any): Promise<void> => {
     );
   }
   await nowPaymentChecker(data.payment_id);
-  const { order_id, payment_status, price_amount } = data;
-  await UpdateSellerAfterPay({
-    order_id,
-    payment_status,
-    price_amount,
-  });
+  // const { order_id, payment_status, price_amount } = data;
+  // await UpdateSellerAfterPay({
+  //   order_id,
+  //   payment_status,
+  //   price_amount,
+  // });
   // update user to vari
 };
 
@@ -164,7 +137,7 @@ const updateUser = async (
   requestedUser: JwtPayload
 ): Promise<User | null> => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
-  const { password, isPaidForSeller, isApprovedForSeller, ...rest } = payload;
+  const { password, ...rest } = payload;
   let genarateBycryptPass;
   if (password) {
     genarateBycryptPass = await createBycryptPassword(password);
@@ -176,8 +149,7 @@ const updateUser = async (
   }
   const isRoleExits = rest.role;
   const isRoleNotMatch = isUserExist.role !== rest.role;
-  const isRequestedUSerNotSuperAdmin =
-    requestedUser.role !== UserRole.superAdmin;
+  const isRequestedUSerNotSuperAdmin = requestedUser.role !== UserRole.admin;
 
   if (isRoleExits && isRoleNotMatch && isRequestedUSerNotSuperAdmin) {
     throw new ApiError(
@@ -185,25 +157,7 @@ const updateUser = async (
       'User role can only be changed by super admin'
     );
   }
-  const isUser = requestedUser.role !== UserRole.user;
-  const isSeller = requestedUser.role !== UserRole.seller;
-  if ((isUser || isSeller) && payload.isApprovedForSeller) {
-    throw new ApiError(
-      httpStatus.BAD_REQUEST,
-      'only admin(ccAdmin,financeAdmin) can verify seller '
-    );
-  }
 
-  if (
-    isUserExist.role !== UserRole.superAdmin &&
-    isUserExist.role !== UserRole.admin
-  ) {
-    if (isUserExist.id === requestedUser.userId) {
-      if (payload.name) {
-        checkUserUpdateTime(isUserExist.updatedAt);
-      }
-    }
-  }
   const result = await prisma.user.update({
     where: {
       id,
@@ -212,17 +166,6 @@ const updateUser = async (
       ? { ...rest, password: genarateBycryptPass }
       : rest,
   });
-  // if admin update a seller verification send email
-  if (payload.isApprovedForSeller && result.role === UserRole.seller) {
-    await sendEmail(
-      { to: result.email },
-      {
-        subject: EmailTemplates.sellerRequestAccepted.subject,
-        html: EmailTemplates.sellerRequestAccepted.html(),
-      }
-    );
-  }
-  console.log(payload);
   return result;
 };
 
@@ -233,189 +176,189 @@ const deleteUser = async (id: string): Promise<User | null> => {
   });
 };
 
-const adminOverview = async (): Promise<TAdminOverview | null> => {
-  const totalAccount = await prisma.account.count();
-  const totalSoldAccount = await prisma.account.count({
-    where: { isSold: true },
-  });
-  const totalUser = await prisma.user.count();
-  const mainAdmin = await prisma.user.findUnique({
-    where: { email: config.mainAdminEmail },
-    include: {
-      Currency: { select: { amount: true } },
-    },
-  });
-  if (!mainAdmin) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Main admin Not found!');
-  }
-  const totalEarning = mainAdmin.Currency?.amount || 0;
-  const totalSellerAmount = await prisma.currency.aggregate({
-    where: {
-      ownBy: {
-        role: 'seller',
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const totalUserAmount = await prisma.currency.aggregate({
-    where: {
-      ownBy: {
-        role: 'user',
-      },
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  return {
-    totalAccount,
-    totalSoldAccount,
-    totalUser,
-    totalEarning,
-    totalUserAmount: totalUserAmount._sum.amount || 0,
-    totalSellerAmount: totalSellerAmount._sum.amount || 0,
-  };
-};
-const sellerOverview = async (id: string): Promise<TSellerOverview | null> => {
-  const totalAccount = await prisma.account.count({ where: { ownById: id } });
-  const totalAccountApprove = await prisma.account.count({
-    where: { ownById: id, approvedForSale: 'approved' },
-  });
-  const totalSoldAccount = await prisma.account.count({
-    where: { isSold: true, ownById: id },
-  });
-  const totalOrder = await prisma.orders.count({ where: { orderById: id } });
-  const currency = await prisma.currency.findUnique({
-    where: { ownById: id },
-  });
-  const totalMoney = currency?.amount || 0;
-  const totalWithdraw = await prisma.withdrawalRequest.aggregate({
-    where: {
-      status: 'approved',
-      ownById: id,
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  const totalFundWallet = await prisma.currencyRequest.aggregate({
-    where: {
-      status: 'approved',
-      ownById: id,
-    },
-    _sum: {
-      amount: true,
-    },
-  });
-  console.log(totalWithdraw);
-  const today = new Date();
-  const pastYearDate = new Date(
-    today.getFullYear() - 1,
-    today.getMonth(),
-    today.getDate()
-  );
+// const adminOverview = async (): Promise<TAdminOverview | null> => {
+//   const totalAccount = await prisma.account.count();
+//   const totalSoldAccount = await prisma.account.count({
+//     where: { isSold: true },
+//   });
+//   const totalUser = await prisma.user.count();
+//   const mainAdmin = await prisma.user.findUnique({
+//     where: { email: config.mainAdminEmail },
+//     include: {
+//       Currency: { select: { amount: true } },
+//     },
+//   });
+//   if (!mainAdmin) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, 'Main admin Not found!');
+//   }
+//   const totalEarning = mainAdmin.Currency?.amount || 0;
+//   const totalSellerAmount = await prisma.currency.aggregate({
+//     where: {
+//       ownBy: {
+//         role: 'seller',
+//       },
+//     },
+//     _sum: {
+//       amount: true,
+//     },
+//   });
+//   const totalUserAmount = await prisma.currency.aggregate({
+//     where: {
+//       ownBy: {
+//         role: 'user',
+//       },
+//     },
+//     _sum: {
+//       amount: true,
+//     },
+//   });
+//   return {
+//     totalAccount,
+//     totalSoldAccount,
+//     totalUser,
+//     totalEarning,
+//     totalUserAmount: totalUserAmount._sum.amount || 0,
+//     totalSellerAmount: totalSellerAmount._sum.amount || 0,
+//   };
+// };
+// const sellerOverview = async (id: string): Promise<TSellerOverview | null> => {
+//   const totalAccount = await prisma.account.count({ where: { ownById: id } });
+//   const totalAccountApprove = await prisma.account.count({
+//     where: { ownById: id, approvedForSale: 'approved' },
+//   });
+//   const totalSoldAccount = await prisma.account.count({
+//     where: { isSold: true, ownById: id },
+//   });
+//   const totalOrder = await prisma.orders.count({ where: { orderById: id } });
+//   const currency = await prisma.currency.findUnique({
+//     where: { ownById: id },
+//   });
+//   const totalMoney = currency?.amount || 0;
+//   const totalWithdraw = await prisma.withdrawalRequest.aggregate({
+//     where: {
+//       status: 'approved',
+//       ownById: id,
+//     },
+//     _sum: {
+//       amount: true,
+//     },
+//   });
+//   const totalFundWallet = await prisma.currencyRequest.aggregate({
+//     where: {
+//       status: 'approved',
+//       ownById: id,
+//     },
+//     _sum: {
+//       amount: true,
+//     },
+//   });
+//   console.log(totalWithdraw);
+//   const today = new Date();
+//   const pastYearDate = new Date(
+//     today.getFullYear() - 1,
+//     today.getMonth(),
+//     today.getDate()
+//   );
 
-  const pastYearData = await prisma.account.findMany({
-    where: {
-      createdAt: {
-        gte: pastYearDate,
-        lte: today,
-      },
-      isSold: true,
-      ownById: id,
-    },
-    select: {
-      price: true,
-      Orders: {
-        select: {
-          createdAt: true,
-        },
-      },
-    },
-  });
+//   const pastYearData = await prisma.account.findMany({
+//     where: {
+//       createdAt: {
+//         gte: pastYearDate,
+//         lte: today,
+//       },
+//       isSold: true,
+//       ownById: id,
+//     },
+//     select: {
+//       price: true,
+//       Orders: {
+//         select: {
+//           createdAt: true,
+//         },
+//       },
+//     },
+//   });
 
-  return {
-    totalAccount,
-    totalSoldAccount,
-    totalOrder,
-    totalMoney,
-    totalWithdraw: totalWithdraw._sum.amount || 0,
-    totalAccountApprove,
-    totalFundWallet: totalFundWallet._sum.amount || 0,
-    pastYearData: pastYearData || [],
-  };
-};
-const sellerProfileInfo = async (
-  id: string
-): Promise<TSellerProfileInfo | null> => {
-  const isSellerExist = await prisma.user.findUnique({
-    where: { id },
-    select: {
-      name: true,
-      id: true,
-      profileImg: true,
-      isVerifiedByAdmin: true,
-      country: true,
-      createdAt: true,
-    },
-  });
-  if (!isSellerExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Seller doesn't exist");
-  }
-  const totalAccountApprove = await prisma.account.count({
-    where: { ownById: id, approvedForSale: 'approved' },
-  });
-  const totalSoldAccount = await prisma.account.count({
-    where: { isSold: true, ownById: id },
-  });
-  const totalCancelOrder = await prisma.orders.count({
-    where: {
-      account: {
-        ownById: id,
-      },
-      status: EOrderStatus.cancelled,
-    },
-  });
-  const totalOrder = await prisma.orders.count({ where: { orderById: id } });
-  const totalReviews = await prisma.review.count({ where: { sellerId: id } });
-  const totalPositiveReviews = await prisma.review.count({
-    where: { sellerId: id, reviewStatus: EReviewStatus.positive },
-  });
-  const totalNegativeReviews = await prisma.review.count({
-    where: { sellerId: id, reviewStatus: EReviewStatus.negative },
-  });
+//   return {
+//     totalAccount,
+//     totalSoldAccount,
+//     totalOrder,
+//     totalMoney,
+//     totalWithdraw: totalWithdraw._sum.amount || 0,
+//     totalAccountApprove,
+//     totalFundWallet: totalFundWallet._sum.amount || 0,
+//     pastYearData: pastYearData || [],
+//   };
+// };
+// const sellerProfileInfo = async (
+//   id: string
+// ): Promise<TSellerProfileInfo | null> => {
+//   const isSellerExist = await prisma.user.findUnique({
+//     where: { id },
+//     select: {
+//       name: true,
+//       id: true,
+//       profileImg: true,
+//       isVerifiedByAdmin: true,
+//       country: true,
+//       createdAt: true,
+//     },
+//   });
+//   if (!isSellerExist) {
+//     throw new ApiError(httpStatus.BAD_REQUEST, "Seller doesn't exist");
+//   }
+//   const totalAccountApprove = await prisma.account.count({
+//     where: { ownById: id, approvedForSale: 'approved' },
+//   });
+//   const totalSoldAccount = await prisma.account.count({
+//     where: { isSold: true, ownById: id },
+//   });
+//   const totalCancelOrder = await prisma.orders.count({
+//     where: {
+//       account: {
+//         ownById: id,
+//       },
+//       status: EOrderStatus.cancelled,
+//     },
+//   });
+//   const totalOrder = await prisma.orders.count({ where: { orderById: id } });
+//   const totalReviews = await prisma.review.count({ where: { sellerId: id } });
+//   const totalPositiveReviews = await prisma.review.count({
+//     where: { sellerId: id, reviewStatus: EReviewStatus.positive },
+//   });
+//   const totalNegativeReviews = await prisma.review.count({
+//     where: { sellerId: id, reviewStatus: EReviewStatus.negative },
+//   });
 
-  return {
-    totalSoldAccount,
-    totalOrder,
-    totalAccountApprove,
-    totalCancelOrder: totalCancelOrder,
-    totalPositiveReviews,
-    totalNegativeReviews,
-    totalReviews,
-    sellerInfo: {
-      ...isSellerExist,
-    },
-  };
-};
-const userOverview = async (id: string): Promise<TUserOverview | null> => {
-  const totalOrder = await prisma.orders.count({ where: { orderById: id } });
-  const totalAccountOnCart = await prisma.cart.count({
-    where: { ownById: id },
-  });
-  // const totalOrder = await prisma.account.count({ where: { ownById: id } });
-  const currency = await prisma.currency.findUnique({
-    where: { ownById: id },
-  });
-  const totalMoney = currency?.amount || 0;
-  return {
-    totalOrder,
-    totalAccountOnCart,
-    totalMoney,
-  };
-};
+//   return {
+//     totalSoldAccount,
+//     totalOrder,
+//     totalAccountApprove,
+//     totalCancelOrder: totalCancelOrder,
+//     totalPositiveReviews,
+//     totalNegativeReviews,
+//     totalReviews,
+//     sellerInfo: {
+//       ...isSellerExist,
+//     },
+//   };
+// };
+// const userOverview = async (id: string): Promise<TUserOverview | null> => {
+//   const totalOrder = await prisma.orders.count({ where: { orderById: id } });
+//   const totalAccountOnCart = await prisma.cart.count({
+//     where: { ownById: id },
+//   });
+//   // const totalOrder = await prisma.account.count({ where: { ownById: id } });
+//   const currency = await prisma.currency.findUnique({
+//     where: { ownById: id },
+//   });
+//   const totalMoney = currency?.amount || 0;
+//   return {
+//     totalOrder,
+//     totalAccountOnCart,
+//     totalMoney,
+//   };
+// };
 const sendUserQuery = async (
   id: string,
   description: string,
@@ -475,8 +418,4 @@ export const UserService = {
   deleteUser,
   sendUserQuery,
   sellerIpn,
-  adminOverview,
-  sellerOverview,
-  userOverview,
-  sellerProfileInfo,
 };

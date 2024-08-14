@@ -5,8 +5,6 @@ import ApiError from '../errors/ApiError';
 import EmailTemplates from '../shared/EmailTemplates';
 import prisma from '../shared/prisma';
 import sendEmail from './sendEmail';
-import sendNotification from './sendNotification';
-
 const UpdateCurrencyByRequestAfterPay = async (data: {
   order_id: string;
   payment_status: string;
@@ -90,12 +88,12 @@ const UpdateCurrencyByRequestAfterPay = async (data: {
       }
     });
     if (userId.length) {
-      await sendNotification({
-        title: 'Deposit',
-        message: `You deposited ${data.price_amount} into your account `,
-        ownById: userId,
-        link: `/account/wallet`,
-      });
+      // await sendNotification({
+      //   title: 'Deposit',
+      //   message: `You deposited ${data.price_amount} into your account `,
+      //   ownById: userId,
+      //   link: `/account/wallet`,
+      // });
     }
   } catch (err) {
     await sendEmail(

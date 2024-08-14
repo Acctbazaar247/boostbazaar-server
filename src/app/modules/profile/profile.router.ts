@@ -5,7 +5,7 @@ import { ProfileController } from './profile.controller';
 const router = express.Router();
 router.get(
   '/',
-  auth(UserRole.admin, UserRole.seller, UserRole.user, UserRole.superAdmin),
+  auth(UserRole.admin, UserRole.user),
   ProfileController.getProfile
 );
 

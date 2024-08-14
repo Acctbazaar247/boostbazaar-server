@@ -8,8 +8,6 @@ const auth_route_1 = require("../modules/auth/auth.route");
 const currency_router_1 = require("../modules/currency/currency.router");
 const currencyRequest_router_1 = require("../modules/currencyRequest/currencyRequest.router");
 const fileUpload_route_1 = require("../modules/fileUpload/fileUpload.route");
-const notifications_router_1 = require("../modules/notifications/notifications.router");
-const orders_router_1 = require("../modules/orders/orders.router");
 const profile_router_1 = require("../modules/profile/profile.router");
 const referral_router_1 = require("../modules/referral/referral.router");
 const review_router_1 = require("../modules/review/review.router");
@@ -31,10 +29,6 @@ const moduleRoutes = [
         route: profile_router_1.ProfileRoutes,
     },
     {
-        path: '/order',
-        route: orders_router_1.OrdersRoutes,
-    },
-    {
         path: '/currency',
         route: currency_router_1.CurrencyRoutes,
     },
@@ -45,10 +39,6 @@ const moduleRoutes = [
     {
         path: '/uploadImg',
         route: fileUpload_route_1.fileUploadRoutes,
-    },
-    {
-        path: '/notification',
-        route: notifications_router_1.NotificationsRoutes,
     },
     {
         path: '/referral',

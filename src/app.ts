@@ -6,11 +6,15 @@ import routes from './app/routes';
 
 import cookieParser from 'cookie-parser';
 import fileUpload from 'express-fileupload';
-import sendPushNotification from './helpers/sendPushNotification';
 
 const app: Application = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 //parser
@@ -22,10 +26,7 @@ app.use(
     tempFileDir: '/tmp/',
   })
 );
-app.get('/api/v1/t', async (req, res) => {
-  await sendPushNotification({ message: 'hi vaia' });
-  res.json({ hi: 'hello' });
-});
+
 app.use('/api/v1', routes);
 
 //global error handler

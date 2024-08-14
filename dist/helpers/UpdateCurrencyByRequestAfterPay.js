@@ -19,7 +19,6 @@ const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const EmailTemplates_1 = __importDefault(require("../shared/EmailTemplates"));
 const prisma_1 = __importDefault(require("../shared/prisma"));
 const sendEmail_1 = __importDefault(require("./sendEmail"));
-const sendNotification_1 = __importDefault(require("./sendNotification"));
 const UpdateCurrencyByRequestAfterPay = (data) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let userId = '';
@@ -94,12 +93,12 @@ const UpdateCurrencyByRequestAfterPay = (data) => __awaiter(void 0, void 0, void
             }
         }));
         if (userId.length) {
-            yield (0, sendNotification_1.default)({
-                title: 'Deposit',
-                message: `You deposited ${data.price_amount} into your account `,
-                ownById: userId,
-                link: `/account/wallet`,
-            });
+            // await sendNotification({
+            //   title: 'Deposit',
+            //   message: `You deposited ${data.price_amount} into your account `,
+            //   ownById: userId,
+            //   link: `/account/wallet`,
+            // });
         }
     }
     catch (err) {

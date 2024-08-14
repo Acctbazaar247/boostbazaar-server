@@ -85,45 +85,53 @@ const deleteUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         data: result,
     });
 }));
-const adminOverview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield user_service_1.UserService.adminOverview();
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'Admin overview successfully!',
-        data: result,
-    });
-}));
-const sellerOverview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.user;
-    const result = yield user_service_1.UserService.sellerOverview(user.userId);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'Seller overview successfully!',
-        data: result,
-    });
-}));
-const sellerProfileInfo = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const id = req.params.id;
-    const result = yield user_service_1.UserService.sellerProfileInfo(id);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'Seller overview successfully!',
-        data: result,
-    });
-}));
-const userOverview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user = req.user;
-    const result = yield user_service_1.UserService.userOverview(user.userId);
-    (0, sendResponse_1.default)(res, {
-        statusCode: http_status_1.default.OK,
-        success: true,
-        message: 'User overview successfully!',
-        data: result,
-    });
-}));
+// const adminOverview: RequestHandler = catchAsync(
+//   async (req: Request, res: Response) => {
+//     const result = await UserService.adminOverview();
+//     sendResponse<TAdminOverview>(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: 'Admin overview successfully!',
+//       data: result,
+//     });
+//   }
+// );
+// const sellerOverview: RequestHandler = catchAsync(
+//   async (req: Request, res: Response) => {
+//     const user = req.user as JwtPayload;
+//     const result = await UserService.sellerOverview(user.userId);
+//     sendResponse<TSellerOverview>(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: 'Seller overview successfully!',
+//       data: result,
+//     });
+//   }
+// );
+// const sellerProfileInfo: RequestHandler = catchAsync(
+//   async (req: Request, res: Response) => {
+//     const id = req.params.id;
+//     const result = await UserService.sellerProfileInfo(id);
+//     sendResponse<TSellerProfileInfo>(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: 'Seller overview successfully!',
+//       data: result,
+//     });
+//   }
+// );
+// const userOverview: RequestHandler = catchAsync(
+//   async (req: Request, res: Response) => {
+//     const user = req.user as JwtPayload;
+//     const result = await UserService.userOverview(user.userId);
+//     sendResponse<TUserOverview>(res, {
+//       statusCode: httpStatus.OK,
+//       success: true,
+//       message: 'User overview successfully!',
+//       data: result,
+//     });
+//   }
+// );
 const sendUserQuery = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user = req.user;
     const des = req.body.description;
@@ -143,9 +151,5 @@ exports.UserController = {
     getSingleUser,
     deleteUser,
     sellerIpn,
-    adminOverview,
-    sellerOverview,
-    userOverview,
     sendUserQuery,
-    sellerProfileInfo,
 };

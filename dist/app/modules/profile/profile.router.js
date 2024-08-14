@@ -9,5 +9,5 @@ const express_1 = __importDefault(require("express"));
 const auth_1 = __importDefault(require("../../middlewares/auth"));
 const profile_controller_1 = require("./profile.controller");
 const router = express_1.default.Router();
-router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.seller, client_1.UserRole.user, client_1.UserRole.superAdmin), profile_controller_1.ProfileController.getProfile);
+router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), profile_controller_1.ProfileController.getProfile);
 exports.ProfileRoutes = router;
