@@ -18,7 +18,7 @@ export default {
   },
   emailUserPass: process.env.EMAIL_USER_PASS,
   emailUser: process.env.EMAIL_USER,
-  mainAdminEmail: process.env.MAIN_ADMIN_EMAIL,
+  mainAdminEmail: process.env.MAIN_ADMIN_EMAIL as string,
   frontendUrl: process.env.FRONT_END_URL,
 
   dollarRate: parseFloat(process.env.DOLLAR_RATE as string),
@@ -36,4 +36,7 @@ export default {
   referralFirstPayAmount: parseInt(
     process.env.REFERRAL_FIRST_PAY_AMOUNT as string
   ),
+  japApiKey: process.env.JAP_API_KEY,
+  japUrl: 'https://justanotherpanel.com/api/v2',
+  japPercentage: parseFloat(process.env.JAP_RATE_PERCENTAGE as string),
 };

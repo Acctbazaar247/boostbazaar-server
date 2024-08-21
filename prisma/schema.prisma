@@ -71,9 +71,13 @@ enum EAccountCategory {
 model Orders {
   id              String           @id @unique @default(uuid())
   accountCategory EAccountCategory
-  amount          Float
+  quantity        Float
+  charge          Float
   orderById       String
   orderBy         User             @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  japServiceId    String
+  japOrderId      String
+  link            String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   status          EOrderStatus?    @default(completed)

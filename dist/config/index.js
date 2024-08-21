@@ -35,4 +35,7 @@ exports.default = {
     flutterwave_public_key: process.env.FLUTTERWAVE_PUBLIC_KEY,
     referralAmount: parseInt(process.env.REFERRAL_AMOUNT),
     referralFirstPayAmount: parseInt(process.env.REFERRAL_FIRST_PAY_AMOUNT),
+    japApiKey: process.env.JAP_API_KEY,
+    japUrl: 'https://justanotherpanel.com/api/v2',
+    japPercentage: parseFloat(process.env.JAP_RATE_PERCENTAGE),
 };
