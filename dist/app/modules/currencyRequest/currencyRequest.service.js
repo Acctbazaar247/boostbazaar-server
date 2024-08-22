@@ -29,12 +29,11 @@ const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const UpdateCurrencyByRequestAfterPay_1 = __importDefault(require("../../../helpers/UpdateCurrencyByRequestAfterPay"));
-const createFlutterWaveInvoice_1 = __importDefault(require("../../../helpers/createFlutterWaveInvoice"));
-const creeateInvoice_1 = __importDefault(require("../../../helpers/creeateInvoice"));
+const createCryptomusPayment_1 = require("../../../helpers/createCryptomusPayment");
 const nowPaymentChecker_1 = __importDefault(require("../../../helpers/nowPaymentChecker"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
+const paystackPayment_1 = require("../../../helpers/paystackPayment");
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
-const common_1 = require("../../../interfaces/common");
 const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const currencyRequest_constant_1 = require("./currencyRequest.constant");
@@ -108,15 +107,22 @@ const createCurrencyRequestInvoice = (payload) => __awaiter(void 0, void 0, void
             throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create Invoie');
         }
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        const data = yield (0, creeateInvoice_1.default)({
-            price_amount: result.amount,
+        // const data = await createNowPayInvoice({
+        //   price_amount: result.amount,
+        //   order_id: result.id,
+        //   ipn_callback_url: '/currency-request/nowpayments-ipn',
+        //   success_url: config.frontendUrl + 'account/wallet' || '',
+        //   cancel_url: config.frontendUrl || '',
+        //   // additionalInfo: 'its adidinlal ',
+        // });
+        const data = yield (0, createCryptomusPayment_1.createCryptomusPayment)({
+            amount: result.amount,
             order_id: result.id,
-            ipn_callback_url: '/currency-request/nowpayments-ipn',
-            success_url: config_1.default.frontendUrl + 'account/wallet' || '',
-            cancel_url: config_1.default.frontendUrl || '',
-            // additionalInfo: 'its adidinlal ',
+            callback_url: '/currency-request/webhook/cryptomus',
+            success_url: config_1.default.frontendUrl + '',
+            fail_url: config_1.default.frontendUrl || '',
         });
-        return Object.assign(Object.assign({}, result), { url: data.invoice_url });
+        return Object.assign(Object.assign({}, result), { url: data });
     }));
     return newCurrencyRequest;
 });
@@ -129,26 +135,19 @@ const createCurrencyRequestWithPayStack = (payload) => __awaiter(void 0, void 0,
             },
         });
         if (!result) {
-            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create Invoie');
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create Invoice');
         }
-        // const request = await initiatePayment(
-        //   result.amount,
-        //   result.ownBy.email,
-        //   result.id,
-        //   EPaymentType.addFunds,
-        //   result.id,
-        //   config.frontendUrl + 'account/wallet'
-        // );
-        const fluterWave = yield (0, createFlutterWaveInvoice_1.default)({
-            amount: result.amount,
-            customer_email: result.ownBy.email,
-            redirect_url: config_1.default.frontendUrl + 'account/wallet',
-            tx_ref: result.id,
-            paymentType: common_1.EPaymentType.addFunds,
-        });
-        console.log({ fluterWave });
+        // const fluterWave = await generateFlutterWavePaymentURL({
+        //   amount: result.amount,
+        //   customer_email: result.ownBy.email,
+        //   redirect_url: config.frontendUrl + '',
+        //   tx_ref: result.id,
+        //   paymentType: EPaymentType.addFunds,
+        // });
+        // console.log({ fluterWave });
+        const paystack = yield (0, paystackPayment_1.initiatePayment)(payload.amount, result.ownBy.email, result.id, config_1.default.baseServerUrl + '/currency-request/webhook/paystack');
         // return { ...result, url: request.data.authorization_url || '' };
-        return Object.assign(Object.assign({}, result), { url: fluterWave });
+        return Object.assign(Object.assign({}, result), { url: paystack.data.authorization_url });
     }));
     return newCurrencyRequest;
 });

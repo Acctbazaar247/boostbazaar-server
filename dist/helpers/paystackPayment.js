@@ -19,7 +19,7 @@ const config_1 = __importDefault(require("../config"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const PAYSTACK_SECRET_KEY = config_1.default.paystackPaymentApiKey;
 // Function to initiate a payment
-const initiatePayment = (amount, email, reference, paymentType, orderId, callbackUrl) => __awaiter(void 0, void 0, void 0, function* () {
+const initiatePayment = (amount, email, reference, orderId, callbackUrl) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const response = yield axios_1.default.post('https://api.paystack.co/transaction/initialize', 
         // Paystack uses values in kobo (1 NGN = 100 kobo)
@@ -30,7 +30,6 @@ const initiatePayment = (amount, email, reference, paymentType, orderId, callbac
             callback_url: callbackUrl,
             metadata: {
                 orderId,
-                payment_type: paymentType,
             },
         }, {
             headers: {

@@ -33,6 +33,7 @@ exports.default = {
     cloudApiKey: process.env.CLOUD_API_KEY,
     cloudApiSecret: process.env.CLOUD_API_SECRET,
     flutterwave_public_key: process.env.FLUTTERWAVE_PUBLIC_KEY,
+    cryptomus_key: process.env.CRYPTOMUS_API_KEY,
     referralAmount: parseInt(process.env.REFERRAL_AMOUNT),
     referralFirstPayAmount: parseInt(process.env.REFERRAL_FIRST_PAY_AMOUNT),
     japApiKey: process.env.JAP_API_KEY,

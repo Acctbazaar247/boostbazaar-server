@@ -7,12 +7,12 @@ import httpStatus from 'http-status';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import UpdateCurrencyByRequestAfterPay from '../../../helpers/UpdateCurrencyByRequestAfterPay';
-import generateFlutterWavePaymentURL from '../../../helpers/createFlutterWaveInvoice';
-import createNowPayInvoice from '../../../helpers/creeateInvoice';
+import { createCryptomusPayment } from '../../../helpers/createCryptomusPayment';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { initiatePayment } from '../../../helpers/paystackPayment';
 import sendEmail from '../../../helpers/sendEmail';
-import { EPaymentType, IGenericResponse } from '../../../interfaces/common';
+import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
@@ -111,15 +111,22 @@ const createCurrencyRequestInvoice = async (
     }
 
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    const data = await createNowPayInvoice({
-      price_amount: result.amount,
+    // const data = await createNowPayInvoice({
+    //   price_amount: result.amount,
+    //   order_id: result.id,
+    //   ipn_callback_url: '/currency-request/nowpayments-ipn',
+    //   success_url: config.frontendUrl + 'account/wallet' || '',
+    //   cancel_url: config.frontendUrl || '',
+    //   // additionalInfo: 'its adidinlal ',
+    // });
+    const data = await createCryptomusPayment({
+      amount: result.amount,
       order_id: result.id,
-      ipn_callback_url: '/currency-request/nowpayments-ipn',
-      success_url: config.frontendUrl + 'account/wallet' || '',
-      cancel_url: config.frontendUrl || '',
-      // additionalInfo: 'its adidinlal ',
+      callback_url: '/currency-request/webhook/cryptomus',
+      success_url: config.frontendUrl + '',
+      fail_url: config.frontendUrl || '',
     });
-    return { ...result, url: data.invoice_url };
+    return { ...result, url: data };
   });
 
   return newCurrencyRequest;
@@ -139,27 +146,25 @@ const createCurrencyRequestWithPayStack = async (
       },
     });
     if (!result) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Invoie');
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Invoice');
     }
 
-    // const request = await initiatePayment(
-    //   result.amount,
-    //   result.ownBy.email,
-    //   result.id,
-    //   EPaymentType.addFunds,
-    //   result.id,
-    //   config.frontendUrl + 'account/wallet'
-    // );
-    const fluterWave = await generateFlutterWavePaymentURL({
-      amount: result.amount,
-      customer_email: result.ownBy.email,
-      redirect_url: config.frontendUrl + 'account/wallet',
-      tx_ref: result.id,
-      paymentType: EPaymentType.addFunds,
-    });
-    console.log({ fluterWave });
+    // const fluterWave = await generateFlutterWavePaymentURL({
+    //   amount: result.amount,
+    //   customer_email: result.ownBy.email,
+    //   redirect_url: config.frontendUrl + '',
+    //   tx_ref: result.id,
+    //   paymentType: EPaymentType.addFunds,
+    // });
+    // console.log({ fluterWave });
+    const paystack = await initiatePayment(
+      payload.amount,
+      result.ownBy.email,
+      result.id,
+      config.baseServerUrl + '/currency-request/webhook/paystack'
+    );
     // return { ...result, url: request.data.authorization_url || '' };
-    return { ...result, url: fluterWave };
+    return { ...result, url: paystack.data.authorization_url };
   });
 
   return newCurrencyRequest;

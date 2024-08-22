@@ -2,7 +2,6 @@ import axios from 'axios';
 import httpStatus from 'http-status';
 import config from '../config';
 import ApiError from '../errors/ApiError';
-import { EPaymentType } from '../interfaces/common';
 
 const PAYSTACK_SECRET_KEY = config.paystackPaymentApiKey;
 
@@ -11,7 +10,6 @@ export const initiatePayment = async (
   amount: number,
   email: string,
   reference: string,
-  paymentType: EPaymentType,
   orderId: string,
   callbackUrl?: string
 ) => {
@@ -26,7 +24,6 @@ export const initiatePayment = async (
         callback_url: callbackUrl,
         metadata: {
           orderId,
-          payment_type: paymentType,
         },
       },
       {
