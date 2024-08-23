@@ -204,6 +204,19 @@ const adminOverview = () => __awaiter(void 0, void 0, void 0, function* () {
         trafic: trafic,
     };
 });
+const userSpend = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const totalCharge = yield prisma_1.default.orders.aggregate({
+        _sum: {
+            charge: true,
+        },
+        where: {
+            orderById: payload, // Replace this with the actual ID you want to filter by
+        },
+    });
+    return {
+        spend: totalCharge._sum.charge || 0,
+    };
+});
 // const sellerOverview = async (id: string): Promise<TSellerOverview | null> => {
 //   const totalAccount = await prisma.account.count({ where: { ownById: id } });
 //   const totalAccountApprove = await prisma.account.count({
@@ -392,4 +405,5 @@ exports.UserService = {
     sendUserQuery,
     sellerIpn,
     adminOverview,
+    userSpend,
 };

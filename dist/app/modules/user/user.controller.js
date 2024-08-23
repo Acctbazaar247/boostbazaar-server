@@ -94,6 +94,16 @@ const adminOverview = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, 
         data: result,
     });
 }));
+const userSpend = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const user = req.user;
+    const result = yield user_service_1.UserService.userSpend(user.userId);
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: ' successful!',
+        data: result,
+    });
+}));
 // const sellerOverview: RequestHandler = catchAsync(
 //   async (req: Request, res: Response) => {
 //     const user = req.user as JwtPayload;
@@ -151,4 +161,5 @@ exports.UserController = {
     sellerIpn,
     sendUserQuery,
     adminOverview,
+    userSpend,
 };

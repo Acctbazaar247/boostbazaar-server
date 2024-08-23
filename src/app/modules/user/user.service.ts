@@ -220,6 +220,21 @@ const adminOverview = async (): Promise<TAdminOverview | null> => {
     trafic: trafic,
   };
 };
+const userSpend = async (
+  payload: string
+): Promise<{ spend: number } | null> => {
+  const totalCharge = await prisma.orders.aggregate({
+    _sum: {
+      charge: true,
+    },
+    where: {
+      orderById: payload, // Replace this with the actual ID you want to filter by
+    },
+  });
+  return {
+    spend: totalCharge._sum.charge || 0,
+  };
+};
 // const sellerOverview = async (id: string): Promise<TSellerOverview | null> => {
 //   const totalAccount = await prisma.account.count({ where: { ownById: id } });
 //   const totalAccountApprove = await prisma.account.count({
@@ -418,4 +433,5 @@ export const UserService = {
   sendUserQuery,
   sellerIpn,
   adminOverview,
+  userSpend,
 };

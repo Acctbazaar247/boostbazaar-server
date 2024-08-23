@@ -113,6 +113,20 @@ const adminOverview: RequestHandler = catchAsync(
     });
   }
 );
+
+const userSpend: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const user = req.user as JwtPayload;
+
+    const result = await UserService.userSpend(user.userId);
+    sendResponse<{ spend: number }>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: ' successful!',
+      data: result,
+    });
+  }
+);
 // const sellerOverview: RequestHandler = catchAsync(
 //   async (req: Request, res: Response) => {
 //     const user = req.user as JwtPayload;
@@ -178,4 +192,5 @@ export const UserController = {
   sellerIpn,
   sendUserQuery,
   adminOverview,
+  userSpend,
 };
