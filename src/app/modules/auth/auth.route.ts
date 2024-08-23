@@ -32,6 +32,7 @@ router.post(
   auth(UserRole.admin, UserRole.user),
   AuthController.resendEmail
 );
+router.post('/send-forgot-email/:email', AuthController.sendForgotEmail);
 router.post(
   '/verify-forgot-token',
   validateRequest(AuthValidation.verifyForgotToken),
