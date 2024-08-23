@@ -1,3 +1,4 @@
+import { EAccountCategory } from '@prisma/client';
 import { IGenericErrorMessage } from './error';
 
 export type IGenericResponse<T> = {
@@ -14,13 +15,16 @@ export type IGenericErrorResponse = {
   message: string;
   errorMessages: IGenericErrorMessage[];
 };
+type TTrafic = {
+  accountCategory: EAccountCategory;
+  count: number;
+};
 export type TAdminOverview = {
-  totalAccount: number;
-  totalSoldAccount: number;
   totalUser: number;
-  totalEarning: number;
-  totalSellerAmount: number;
-  totalUserAmount: number;
+  totalOrder: number;
+  totalSale: number;
+  totalTodaySale: number;
+  trafic: TTrafic[];
 };
 export type TSellerOverview = {
   totalAccountApprove: number;

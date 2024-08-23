@@ -25,6 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const client_1 = require("@prisma/client");
+const date_fns_1 = require("date-fns");
 const http_status_1 = __importDefault(require("http-status"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const config_1 = __importDefault(require("../../../config"));
@@ -162,51 +163,47 @@ const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
         return deleteUser;
     }));
 });
-// const adminOverview = async (): Promise<TAdminOverview | null> => {
-//   const totalAccount = await prisma.account.count();
-//   const totalSoldAccount = await prisma.account.count({
-//     where: { isSold: true },
-//   });
-//   const totalUser = await prisma.user.count();
-//   const mainAdmin = await prisma.user.findUnique({
-//     where: { email: config.mainAdminEmail },
-//     include: {
-//       Currency: { select: { amount: true } },
-//     },
-//   });
-//   if (!mainAdmin) {
-//     throw new ApiError(httpStatus.BAD_REQUEST, 'Main admin Not found!');
-//   }
-//   const totalEarning = mainAdmin.Currency?.amount || 0;
-//   const totalSellerAmount = await prisma.currency.aggregate({
-//     where: {
-//       ownBy: {
-//         role: 'seller',
-//       },
-//     },
-//     _sum: {
-//       amount: true,
-//     },
-//   });
-//   const totalUserAmount = await prisma.currency.aggregate({
-//     where: {
-//       ownBy: {
-//         role: 'user',
-//       },
-//     },
-//     _sum: {
-//       amount: true,
-//     },
-//   });
-//   return {
-//     totalAccount,
-//     totalSoldAccount,
-//     totalUser,
-//     totalEarning,
-//     totalUserAmount: totalUserAmount._sum.amount || 0,
-//     totalSellerAmount: totalSellerAmount._sum.amount || 0,
-//   };
-// };
+const adminOverview = () => __awaiter(void 0, void 0, void 0, function* () {
+    const totalOrder = yield prisma_1.default.orders.count({
+        where: { status: client_1.EOrderStatus.completed },
+    });
+    const totalSale = yield prisma_1.default.orders.aggregate({
+        _sum: {
+            charge: true,
+        },
+    });
+    const startOfToday = (0, date_fns_1.startOfDay)(new Date());
+    const endOfToday = (0, date_fns_1.endOfDay)(new Date());
+    const totalTodaySale = yield prisma_1.default.orders.aggregate({
+        _sum: {
+            charge: true,
+        },
+        where: {
+            createdAt: {
+                gte: startOfToday,
+                lte: endOfToday,
+            },
+        },
+    });
+    const totalUser = yield prisma_1.default.user.count();
+    const countsByCategory = yield prisma_1.default.orders.groupBy({
+        by: ['accountCategory'],
+        _count: {
+            id: true,
+        },
+    });
+    const trafic = countsByCategory.map(category => ({
+        accountCategory: category.accountCategory,
+        count: category._count.id,
+    }));
+    return {
+        totalUser,
+        totalOrder,
+        totalSale: totalSale._sum.charge || 0,
+        totalTodaySale: totalTodaySale._sum.charge || 0,
+        trafic: trafic,
+    };
+});
 // const sellerOverview = async (id: string): Promise<TSellerOverview | null> => {
 //   const totalAccount = await prisma.account.count({ where: { ownById: id } });
 //   const totalAccountApprove = await prisma.account.count({
@@ -394,4 +391,5 @@ exports.UserService = {
     deleteUser,
     sendUserQuery,
     sellerIpn,
+    adminOverview,
 };
