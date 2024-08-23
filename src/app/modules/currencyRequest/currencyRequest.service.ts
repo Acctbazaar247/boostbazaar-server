@@ -72,6 +72,15 @@ const getAllCurrencyRequest = async (
         : {
             createdAt: 'desc',
           },
+    include: {
+      ownBy: {
+        select: {
+          name: true,
+          profileImg: true,
+          id: true,
+        },
+      },
+    },
   });
   const total = await prisma.currencyRequest.count({ where: whereConditions });
   const output = {
