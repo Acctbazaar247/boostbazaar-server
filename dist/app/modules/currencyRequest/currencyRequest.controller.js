@@ -102,7 +102,7 @@ const getAllCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(
 }));
 const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
-    if (ipnData.event === 'charge.success') {
+    if (ipnData.data.event === 'charge.success') {
         yield currencyRequest_service_1.CurrencyRequestService.payStackWebHook({
             data: ipnData,
         });
