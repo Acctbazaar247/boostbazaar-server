@@ -125,13 +125,13 @@ const getAllCurrencyRequest = catchAsync(
 const payStackWebHook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
-    if (ipnData.data.event === 'charge.success') {
+    if (ipnData.event === 'charge.success') {
       await CurrencyRequestService.payStackWebHook({
         data: ipnData,
       });
     }
     // eslint-disable-next-line no-console
-    console.log(ipnData);
+    // console.log(ipnData);
     // eslint-disable-next-line no-unused-vars
 
     sendResponse<string>(res, {

@@ -102,13 +102,13 @@ const getAllCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(
 }));
 const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
-    if (ipnData.data.event === 'charge.success') {
+    if (ipnData.event === 'charge.success') {
         yield currencyRequest_service_1.CurrencyRequestService.payStackWebHook({
             data: ipnData,
         });
     }
     // eslint-disable-next-line no-console
-    console.log(ipnData);
+    // console.log(ipnData);
     // eslint-disable-next-line no-unused-vars
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
