@@ -182,7 +182,8 @@ const createCurrencyRequestWithPayStack = async (
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const payStackWebHook = async (data: any): Promise<void> => {
   console.log(data, 'from flutter wave');
-  const order_id = data.data.metadata.orderId;
+  console.log(data.data);
+  const order_id = data.data.data.metadata.orderId;
   console.log({ order_id });
   const payment_status = 'finished';
   const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({
