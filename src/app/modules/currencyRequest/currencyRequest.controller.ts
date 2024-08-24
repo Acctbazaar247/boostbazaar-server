@@ -6,7 +6,6 @@ import { JwtPayload } from 'jsonwebtoken';
 import config from '../../../config';
 import { paginationFields } from '../../../constants/pagination';
 import sendEmail from '../../../helpers/sendEmail';
-import { EPaymentType } from '../../../interfaces/common';
 import EmailTemplates from '../../../shared/EmailTemplates';
 import catchAsync from '../../../shared/catchAsync';
 import catchAsyncSemaphore from '../../../shared/catchAsyncSemaphore';
@@ -126,17 +125,10 @@ const getAllCurrencyRequest = catchAsync(
 const payStackWebHook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
-    if (ipnData.status === 'successful') {
-      // const paymentReference = ipnData.data.reference;
-
-      // Perform additional actions, such as updating your database, sending emails, etc.
-      const paymentType = ipnData?.txRef.split('_$_')[0];
-      console.log({ paymentType });
-      if (paymentType === EPaymentType.addFunds) {
-        await CurrencyRequestService.payStackWebHook({
-          data: ipnData,
-        });
-      }
+    if (ipnData.event === 'charge.success') {
+      await CurrencyRequestService.payStackWebHook({
+        data: ipnData,
+      });
     }
     // eslint-disable-next-line no-console
     console.log(ipnData);

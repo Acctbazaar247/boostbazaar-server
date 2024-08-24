@@ -17,7 +17,6 @@ const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const pagination_1 = require("../../../constants/pagination");
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
-const common_1 = require("../../../interfaces/common");
 const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const catchAsyncSemaphore_1 = __importDefault(require("../../../shared/catchAsyncSemaphore"));
@@ -103,16 +102,10 @@ const getAllCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(
 }));
 const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
-    if (ipnData.status === 'successful') {
-        // const paymentReference = ipnData.data.reference;
-        // Perform additional actions, such as updating your database, sending emails, etc.
-        const paymentType = ipnData === null || ipnData === void 0 ? void 0 : ipnData.txRef.split('_$_')[0];
-        console.log({ paymentType });
-        if (paymentType === common_1.EPaymentType.addFunds) {
-            yield currencyRequest_service_1.CurrencyRequestService.payStackWebHook({
-                data: ipnData,
-            });
-        }
+    if (ipnData.event === 'charge.success') {
+        yield currencyRequest_service_1.CurrencyRequestService.payStackWebHook({
+            data: ipnData,
+        });
     }
     // eslint-disable-next-line no-console
     console.log(ipnData);
