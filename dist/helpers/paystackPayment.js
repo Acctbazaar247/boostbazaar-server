@@ -28,6 +28,7 @@ const initiatePayment = (amount, email, reference, orderId, callbackUrl) => __aw
             email,
             reference,
             callback_url: callbackUrl,
+            success_url: config_1.default.frontendUrl,
             metadata: {
                 orderId,
             },
