@@ -40,7 +40,7 @@ const verifyForgotToken = zod_1.z.object({
 });
 const changePassword = zod_1.z.object({
     body: zod_1.z.object({
-        token: zod_1.z.number({ required_error: 'Token is required' }).optional(),
+        otp: zod_1.z.number({ required_error: 'Token is required' }).optional(),
         email: zod_1.z.string({ required_error: 'Email is required' }),
         password: zod_1.z
             .string({ required_error: 'Password is required' })

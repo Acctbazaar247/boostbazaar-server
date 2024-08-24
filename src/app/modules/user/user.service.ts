@@ -231,6 +231,7 @@ const userSpend = async (
       orderById: payload, // Replace this with the actual ID you want to filter by
     },
   });
+  console.log({ totalCharge });
   return {
     spend: totalCharge._sum.charge || 0,
   };

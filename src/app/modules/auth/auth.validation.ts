@@ -38,7 +38,7 @@ const verifyForgotToken = z.object({
 });
 const changePassword = z.object({
   body: z.object({
-    token: z.number({ required_error: 'Token is required' }).optional(),
+    otp: z.number({ required_error: 'Token is required' }).optional(),
     email: z.string({ required_error: 'Email is required' }),
     password: z
       .string({ required_error: 'Password is required' })

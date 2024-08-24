@@ -51,7 +51,7 @@ router.patch(
   validateRequest(UserValidation.updateValidation),
   UserController.updateUser
 );
-router.get('/spend', auth(UserRole.user), UserController.userSpend);
+router.get('/info/spend', auth(UserRole.user), UserController.userSpend);
 router.delete('/:id', auth(UserRole.admin), UserController.deleteUser);
 
 export const UserRoutes = router;
