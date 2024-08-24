@@ -171,7 +171,7 @@ const createCurrencyRequestWithPayStack = async (
       result.ownBy.email,
       result.id,
       result.id,
-      config.baseServerUrl + '/currency-request/webhook/paystack'
+      config.frontendUrl
     );
     // return { ...result, url: request.data.authorization_url || '' };
     return { ...result, url: paystack.data.authorization_url };

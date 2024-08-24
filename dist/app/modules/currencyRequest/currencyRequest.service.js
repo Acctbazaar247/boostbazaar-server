@@ -154,7 +154,7 @@ const createCurrencyRequestWithPayStack = (payload) => __awaiter(void 0, void 0,
         //   paymentType: EPaymentType.addFunds,
         // });
         // console.log({ fluterWave });
-        const paystack = yield (0, paystackPayment_1.initiatePayment)(payload.amount, result.ownBy.email, result.id, result.id, config_1.default.baseServerUrl + '/currency-request/webhook/paystack');
+        const paystack = yield (0, paystackPayment_1.initiatePayment)(payload.amount, result.ownBy.email, result.id, result.id, config_1.default.frontendUrl);
         // return { ...result, url: request.data.authorization_url || '' };
         return Object.assign(Object.assign({}, result), { url: paystack.data.authorization_url });
     }));
