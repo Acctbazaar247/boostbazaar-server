@@ -22,6 +22,7 @@ export const initiatePayment = async (
         email,
         reference,
         callback_url: callbackUrl,
+        success_url: config.frontendUrl,
         metadata: {
           orderId,
         },
