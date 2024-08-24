@@ -138,13 +138,13 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         }
         // add amount to admin
         yield tx.currency.update({
-            where: { id: admin.id },
+            where: { ownById: admin.id },
             data: {
                 amount: { increment: costNumber },
             },
         });
         const newOrders = yield tx.orders.create({
-            data: Object.assign(Object.assign({}, payload), { japOrderId: japOrderId, charge: costNumber }),
+            data: Object.assign(Object.assign({}, payload), { japOrderId: japOrderId.toString(), charge: costNumber }),
         });
         return newOrders;
     }));

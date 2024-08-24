@@ -146,7 +146,7 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     }
     // add amount to admin
     await tx.currency.update({
-      where: { id: admin.id },
+      where: { ownById: admin.id },
       data: {
         amount: { increment: costNumber },
       },
@@ -154,7 +154,7 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     const newOrders = await tx.orders.create({
       data: {
         ...payload,
-        japOrderId: japOrderId,
+        japOrderId: japOrderId.toString(),
         charge: costNumber,
       },
     });
