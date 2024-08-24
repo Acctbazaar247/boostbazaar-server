@@ -170,6 +170,7 @@ const createCurrencyRequestWithPayStack = async (
       payload.amount,
       result.ownBy.email,
       result.id,
+      result.id,
       config.baseServerUrl + '/currency-request/webhook/paystack'
     );
     // return { ...result, url: request.data.authorization_url || '' };
@@ -183,7 +184,7 @@ const createCurrencyRequestWithPayStack = async (
 const payStackWebHook = async (data: any): Promise<void> => {
   console.log(data, 'from flutter wave s');
   console.log(data.data.data.data.metadata);
-  const order_id = data.data.data.data.metadata.orderId;
+  const order_id = data.data.data.data.reference;
   console.log({ order_id });
   const payment_status = 'finished';
   const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({

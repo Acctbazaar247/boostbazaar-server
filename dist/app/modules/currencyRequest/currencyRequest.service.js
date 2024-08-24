@@ -154,7 +154,7 @@ const createCurrencyRequestWithPayStack = (payload) => __awaiter(void 0, void 0,
         //   paymentType: EPaymentType.addFunds,
         // });
         // console.log({ fluterWave });
-        const paystack = yield (0, paystackPayment_1.initiatePayment)(payload.amount, result.ownBy.email, result.id, config_1.default.baseServerUrl + '/currency-request/webhook/paystack');
+        const paystack = yield (0, paystackPayment_1.initiatePayment)(payload.amount, result.ownBy.email, result.id, result.id, config_1.default.baseServerUrl + '/currency-request/webhook/paystack');
         // return { ...result, url: request.data.authorization_url || '' };
         return Object.assign(Object.assign({}, result), { url: paystack.data.authorization_url });
     }));
@@ -164,7 +164,7 @@ const createCurrencyRequestWithPayStack = (payload) => __awaiter(void 0, void 0,
 const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(data, 'from flutter wave s');
     console.log(data.data.data.data.metadata);
-    const order_id = data.data.data.data.metadata.orderId;
+    const order_id = data.data.data.data.reference;
     console.log({ order_id });
     const payment_status = 'finished';
     const isCurrencyRequestExits = yield prisma_1.default.currencyRequest.findUnique({
