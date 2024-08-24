@@ -1,9 +1,2 @@
-
-        export const ordersSearchableFields = [ 
-          
-        ];
-        export const ordersFilterAbleFields = [
-            
-          ];
-          
-        
+export const ordersSearchableFields = [];
+export const ordersFilterAbleFields = ['ownById'];

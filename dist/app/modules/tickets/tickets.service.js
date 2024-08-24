@@ -80,7 +80,7 @@ const getAllTickets = (filters, paginationOptions) => __awaiter(void 0, void 0, 
             },
         },
     });
-    const total = yield prisma_1.default.tickets.count();
+    const total = yield prisma_1.default.tickets.count({ where: whereConditions });
     const output = {
         data: result,
         meta: { page, limit, total },

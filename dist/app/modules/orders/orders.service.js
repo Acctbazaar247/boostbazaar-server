@@ -72,8 +72,17 @@ const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, v
             : {
                 createdAt: 'desc',
             },
+        include: {
+            orderBy: {
+                select: {
+                    name: true,
+                    profileImg: true,
+                    id: true,
+                },
+            },
+        },
     });
-    const total = yield prisma_1.default.orders.count();
+    const total = yield prisma_1.default.orders.count({ where: whereConditions });
     const output = {
         data: result,
         meta: { page, limit, total },

@@ -62,8 +62,17 @@ const getAllOrders = async (
         : {
             createdAt: 'desc',
           },
+    include: {
+      orderBy: {
+        select: {
+          name: true,
+          profileImg: true,
+          id: true,
+        },
+      },
+    },
   });
-  const total = await prisma.orders.count();
+  const total = await prisma.orders.count({ where: whereConditions });
   const output = {
     data: result,
     meta: { page, limit, total },

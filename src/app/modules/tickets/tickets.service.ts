@@ -70,7 +70,7 @@ const getAllTickets = async (
       },
     },
   });
-  const total = await prisma.tickets.count();
+  const total = await prisma.tickets.count({ where: whereConditions });
   const output = {
     data: result,
     meta: { page, limit, total },
