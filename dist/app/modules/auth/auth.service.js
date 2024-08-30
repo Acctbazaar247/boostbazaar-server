@@ -123,7 +123,7 @@ const createUser = (user) => __awaiter(void 0, void 0, void 0, function* () {
     // eslint-disable-next-line no-unused-vars
 });
 const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email: givenEmail, password } = payload;
+    const { email: givenEmail, password: givenPassword } = payload;
     const isUserExist = yield prisma_1.default.user.findFirst({
         where: { email: givenEmail },
     });
@@ -134,7 +134,7 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         throw new ApiError_1.default(http_status_1.default.FORBIDDEN, "We noticed several attempts to access this account with an incorrect password. To protect your information, this account has been locked. Please reset your password using the 'Forgot Password' for enhanced security. ");
     }
     if (isUserExist.password &&
-        !(yield bcryptjs_1.default.compare(password, isUserExist.password))) {
+        !(yield bcryptjs_1.default.compare(givenPassword, isUserExist.password))) {
         if (isUserExist.failedLoginAttempt === null) {
             yield prisma_1.default.user.update({
                 where: { id: isUserExist.id },
@@ -160,7 +160,8 @@ const loginUser = (payload) => __awaiter(void 0, void 0, void 0, function* () {
         data: { failedLoginAttempt: 0 },
     });
     //create access token & refresh token
-    const { email, id, role, name } = isUserExist, others = __rest(isUserExist, ["email", "id", "role", "name"]);
+    // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+    const { email, id, role, name, password } = isUserExist, others = __rest(isUserExist, ["email", "id", "role", "name", "password"]);
     const accessToken = jwtHelpers_1.jwtHelpers.createToken({ userId: id, role }, config_1.default.jwt.secret, config_1.default.jwt.expires_in);
     const refreshToken = jwtHelpers_1.jwtHelpers.createToken({ userId: id, role }, config_1.default.jwt.refresh_secret, config_1.default.jwt.refresh_expires_in);
     return {

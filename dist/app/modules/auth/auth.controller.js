@@ -100,7 +100,7 @@ const loginUser = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void
     (0, sendResponse_1.default)(res, {
         statusCode: 200,
         success: true,
-        message: 'User lohggedin successfully !',
+        message: 'User logged in successfully !',
         data: {
             accessToken: result.accessToken,
             user: result.user,

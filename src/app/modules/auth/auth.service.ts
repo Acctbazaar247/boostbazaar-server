@@ -130,7 +130,7 @@ const createUser = async (user: RefUser): Promise<ILoginResponse> => {
 };
 
 const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
-  const { email: givenEmail, password } = payload;
+  const { email: givenEmail, password: givenPassword } = payload;
   const isUserExist = await prisma.user.findFirst({
     where: { email: givenEmail },
   });
@@ -146,7 +146,7 @@ const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
   }
   if (
     isUserExist.password &&
-    !(await bcryptjs.compare(password, isUserExist.password))
+    !(await bcryptjs.compare(givenPassword, isUserExist.password))
   ) {
     if (isUserExist.failedLoginAttempt === null) {
       await prisma.user.update({
@@ -173,7 +173,8 @@ const loginUser = async (payload: ILogin): Promise<ILoginResponse> => {
   });
   //create access token & refresh token
 
-  const { email, id, role, name, ...others } = isUserExist;
+  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+  const { email, id, role, name, password, ...others } = isUserExist;
 
   const accessToken = jwtHelpers.createToken(
     { userId: id, role },
