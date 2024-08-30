@@ -34,7 +34,19 @@ const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, voi
         message: 'User fetched   successfully',
         data: {
             accessToken: accessToken,
-            user: result,
+            user: {
+                name: result.name,
+                id: result.id,
+                email: result.email,
+                role: result.role,
+                shouldSendEmail: result.shouldSendEmail,
+                failedLoginAttempt: result.failedLoginAttempt,
+                profileImg: result.profileImg,
+                createdAt: result.createdAt,
+                isBlocked: result.isBlocked,
+                isVerified: result.isVerified,
+                updatedAt: result.updatedAt,
+            },
         },
     });
 }));
