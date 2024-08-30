@@ -8,7 +8,6 @@ import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
 import { TService } from '../service/service.interface';
 import { ServiceService } from '../service/service.service';
-import createOrder from '../service/service.utils';
 import { ordersSearchableFields } from './orders.constant';
 import { IOrdersFilters } from './orders.interface';
 
@@ -129,11 +128,12 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     );
   }
   // make order in jap
-  const japOrderId = await createOrder(
-    payload.japServiceId,
-    payload.link,
-    payload.quantity
-  );
+  // const japOrderId = await createOrder(
+  //   payload.japServiceId,
+  //   payload.link,
+  //   payload.quantity
+  // );
+  const japOrderId = 'random';
   if (!japOrderId) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'failed to make orders');
   }

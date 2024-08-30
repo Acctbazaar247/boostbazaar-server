@@ -30,7 +30,7 @@ router.post(
   CurrencyRequestController.createCurrencyRequestWithPayStack
 );
 router.post(
-  '/cryptomus',
+  '/nowpayment',
   auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),
   CurrencyRequestController.createCurrencyRequestInvoice
@@ -38,8 +38,8 @@ router.post(
 
 router.post('/webhook/paystack', CurrencyRequestController.payStackWebHook);
 router.post(
-  '/nowpayments-ipn',
-  CurrencyRequestController.getSingleCurrencyRequestIpn
+  '/webhook/nowpayment',
+  CurrencyRequestController.createCurrencyRequestIpn
 );
 
 router.patch(

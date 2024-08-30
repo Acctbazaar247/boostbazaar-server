@@ -31,7 +31,6 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const service_service_1 = require("../service/service.service");
-const service_utils_1 = __importDefault(require("../service/service.utils"));
 const orders_constant_1 = require("./orders.constant");
 const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, skip } = paginationHelper_1.paginationHelpers.calculatePagination(paginationOptions);
@@ -126,7 +125,12 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Something went wrong no admin found!');
     }
     // make order in jap
-    const japOrderId = yield (0, service_utils_1.default)(payload.japServiceId, payload.link, payload.quantity);
+    // const japOrderId = await createOrder(
+    //   payload.japServiceId,
+    //   payload.link,
+    //   payload.quantity
+    // );
+    const japOrderId = 'random';
     if (!japOrderId) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'failed to make orders');
     }

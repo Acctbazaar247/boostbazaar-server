@@ -7,7 +7,7 @@ import httpStatus from 'http-status';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import UpdateCurrencyByRequestAfterPay from '../../../helpers/UpdateCurrencyByRequestAfterPay';
-import { createCryptomusPayment } from '../../../helpers/createCryptomusPayment';
+import createNowPayInvoice from '../../../helpers/creeateInvoice';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { initiatePayment } from '../../../helpers/paystackPayment';
@@ -120,22 +120,22 @@ const createCurrencyRequestInvoice = async (
     }
 
     // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-    // const data = await createNowPayInvoice({
-    //   price_amount: result.amount,
-    //   order_id: result.id,
-    //   ipn_callback_url: '/currency-request/nowpayments-ipn',
-    //   success_url: config.frontendUrl + 'account/wallet' || '',
-    //   cancel_url: config.frontendUrl || '',
-    //   // additionalInfo: 'its adidinlal ',
-    // });
-    const data = await createCryptomusPayment({
-      amount: result.amount,
+    const data = await createNowPayInvoice({
+      price_amount: result.amount,
       order_id: result.id,
-      callback_url: '/currency-request/webhook/cryptomus',
+      ipn_callback_url: '/currency-request/webhook/nowpayment',
       success_url: config.frontendUrl + '',
-      fail_url: config.frontendUrl || '',
+      cancel_url: config.frontendUrl || '',
+      // additionalInfo: 'its adidinlal ',
     });
-    return { ...result, url: data };
+    // const data = await createCryptomusPayment({
+    //   amount: result.amount,
+    //   order_id: result.id,
+    //   callback_url: '/currency-request/webhook/cryptomus',
+    //   success_url: config.frontendUrl + '',
+    //   fail_url: config.frontendUrl || '',
+    // });
+    return { ...result, url: data.invoice_url };
   });
 
   return newCurrencyRequest;
@@ -210,6 +210,7 @@ const payStackWebHook = async (data: any): Promise<void> => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = async (data: any): Promise<void> => {
   const { order_id, payment_status, price_amount } = data;
+  console.log('nowpayment', data);
   if (data.payment_status !== 'finished') {
     throw new ApiError(
       httpStatus.BAD_REQUEST,

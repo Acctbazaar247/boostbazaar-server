@@ -117,7 +117,7 @@ const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: 'success',
     });
 }));
-const getSingleCurrencyRequestIpn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createCurrencyRequestIpn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     // eslint-disable-next-line no-unused-vars
     yield currencyRequest_service_1.CurrencyRequestService.createCurrencyRequestIpn(ipnData);
@@ -166,7 +166,7 @@ exports.CurrencyRequestController = {
     getSingleCurrencyRequest,
     deleteCurrencyRequest,
     createCurrencyRequestInvoice,
-    getSingleCurrencyRequestIpn,
+    createCurrencyRequestIpn,
     createCurrencyRequestWithPayStack,
     payStackWebHook,
 };

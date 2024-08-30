@@ -29,7 +29,7 @@ const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const UpdateCurrencyByRequestAfterPay_1 = __importDefault(require("../../../helpers/UpdateCurrencyByRequestAfterPay"));
-const createCryptomusPayment_1 = require("../../../helpers/createCryptomusPayment");
+const creeateInvoice_1 = __importDefault(require("../../../helpers/creeateInvoice"));
 const nowPaymentChecker_1 = __importDefault(require("../../../helpers/nowPaymentChecker"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const paystackPayment_1 = require("../../../helpers/paystackPayment");
@@ -116,22 +116,22 @@ const createCurrencyRequestInvoice = (payload) => __awaiter(void 0, void 0, void
             throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create Invoie');
         }
         // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-        // const data = await createNowPayInvoice({
-        //   price_amount: result.amount,
-        //   order_id: result.id,
-        //   ipn_callback_url: '/currency-request/nowpayments-ipn',
-        //   success_url: config.frontendUrl + 'account/wallet' || '',
-        //   cancel_url: config.frontendUrl || '',
-        //   // additionalInfo: 'its adidinlal ',
-        // });
-        const data = yield (0, createCryptomusPayment_1.createCryptomusPayment)({
-            amount: result.amount,
+        const data = yield (0, creeateInvoice_1.default)({
+            price_amount: result.amount,
             order_id: result.id,
-            callback_url: '/currency-request/webhook/cryptomus',
+            ipn_callback_url: '/currency-request/webhook/nowpayment',
             success_url: config_1.default.frontendUrl + '',
-            fail_url: config_1.default.frontendUrl || '',
+            cancel_url: config_1.default.frontendUrl || '',
+            // additionalInfo: 'its adidinlal ',
         });
-        return Object.assign(Object.assign({}, result), { url: data });
+        // const data = await createCryptomusPayment({
+        //   amount: result.amount,
+        //   order_id: result.id,
+        //   callback_url: '/currency-request/webhook/cryptomus',
+        //   success_url: config.frontendUrl + '',
+        //   fail_url: config.frontendUrl || '',
+        // });
+        return Object.assign(Object.assign({}, result), { url: data.invoice_url });
     }));
     return newCurrencyRequest;
 });
@@ -189,6 +189,7 @@ const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* ()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const { order_id, payment_status, price_amount } = data;
+    console.log('nowpayment', data);
     if (data.payment_status !== 'finished') {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Sorry payment is not finished yet ');
     }

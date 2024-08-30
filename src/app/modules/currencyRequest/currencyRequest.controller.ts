@@ -142,7 +142,7 @@ const payStackWebHook: RequestHandler = catchAsync(
     });
   }
 );
-const getSingleCurrencyRequestIpn: RequestHandler = catchAsync(
+const createCurrencyRequestIpn: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
 
@@ -212,7 +212,7 @@ export const CurrencyRequestController = {
   getSingleCurrencyRequest,
   deleteCurrencyRequest,
   createCurrencyRequestInvoice,
-  getSingleCurrencyRequestIpn,
+  createCurrencyRequestIpn,
   createCurrencyRequestWithPayStack,
   payStackWebHook,
 };
