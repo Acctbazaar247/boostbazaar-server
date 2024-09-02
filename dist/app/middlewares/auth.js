@@ -27,6 +27,7 @@ const auth = (...requiredRoles) => (req, res, next) => __awaiter(void 0, void 0,
         // verify token
         let verifiedUser = null;
         verifiedUser = jwtHelpers_1.jwtHelpers.verifyToken(token, config_1.default.jwt.secret);
+        console.log(verifiedUser);
         // check user exits and same role
         const queryUser = yield prisma_1.default.user.findUnique({
             where: { id: verifiedUser.userId },

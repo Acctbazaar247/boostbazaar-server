@@ -3,8 +3,10 @@ import httpStatus from 'http-status';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
+import sendEmail from '../../../helpers/sendEmail';
 import { IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
+import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
 import { TService } from '../service/service.interface';
 import { ServiceService } from '../service/service.service';
@@ -91,6 +93,7 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
   }
   const isLessThenMin = parseFloat(mainService.min) > payload.quantity;
   const isMoreThenMax = parseFloat(mainService.max) < payload.quantity;
+
   if (isLessThenMin || isMoreThenMax) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
@@ -169,6 +172,19 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     });
     return newOrders;
   });
+  const userEmail = await prisma.user.findFirst({
+    where: { id: payload.orderById },
+    select: { email: true },
+  });
+  if (userEmail?.email) {
+    sendEmail(
+      { to: userEmail.email },
+      {
+        subject: EmailTemplates.orderSuccessful.subject,
+        html: EmailTemplates.orderSuccessful.html(),
+      }
+    );
+  }
   return output;
 };
 

@@ -29,6 +29,8 @@ const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
+const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
+const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const service_service_1 = require("../service/service.service");
 const orders_constant_1 = require("./orders.constant");
@@ -161,6 +163,16 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         });
         return newOrders;
     }));
+    const userEmail = yield prisma_1.default.user.findFirst({
+        where: { id: payload.orderById },
+        select: { email: true },
+    });
+    if (userEmail === null || userEmail === void 0 ? void 0 : userEmail.email) {
+        (0, sendEmail_1.default)({ to: userEmail.email }, {
+            subject: EmailTemplates_1.default.orderSuccessful.subject,
+            html: EmailTemplates_1.default.orderSuccessful.html(),
+        });
+    }
     return output;
 });
 const getSingleOrders = (id) => __awaiter(void 0, void 0, void 0, function* () {

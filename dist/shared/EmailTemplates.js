@@ -10,115 +10,156 @@ const EmailTemplates = {
         text: undefined,
         html: (data) => {
             return `
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Email</title>
-          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-          <style>
-              body {
-                  margin: 0;
-                  padding: 0;
-                  background-color: #f4f4f4;
-                  color: #000 !important;
-                  font-family: Arial, sans-serif;
-              }
-      
-              .email-box {
-                  background-color: white;
-                  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                  padding: 20px;
-                  max-width: 400px;
-                  width: 100%;
-                  margin: 0 auto; 
-              }
-      
-               /* mobile screens */
-               @media (max-width: 768px) {
-                  .email-box {
-                      max-width: 300px; 
-                  }
-              }
-      
-              .title, p {
-                  text-align: center;
-              }
-      
-              .social-icons {
-                  text-align: center;
-                  margin: 20px 0; 
-                  color: white;
-              }
-      
-              .social-icons span {
-                  margin: 0 10px; 
-                  display: inline-block;
-                  background-color: rgb(255, 85, 0);
-                  border-radius: 50%;
-                  padding: 10px; 
-              }
-      
-              .social-icons span a{
-                  color: #fff;
-                  text-decoration: none;
-              }
-      
-              .account-name {
-                  font-weight: 700;
-                  font-size: 20px;
-                  padding-bottom: 10px;
-              }
-      
-              .btn {
-                  display: block;
-                  width: fit-content;
-                  padding: 12px 40px;
-                  margin: 30px auto;
-                  background-color: transparent;
-                  color: rgb(255, 85, 0);
-                  border-radius: 10px;
-                  outline: none;
-                  border: 1px solid rgb(255, 85, 0);
-                  text-decoration: none;
-              }
-              
-              .end {
-                  font-size: 14px;
-                  color: grey !important;
-                  padding-top: 20px;
-                  text-align: center;
-              }
-          </style>
-      </head>
-      <body>
-          <div class="container">
-              <div class="email-box">
-                  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
-                      <tr>
-                          <td style="text-align: center;">
-                              <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
-                              <h3 style="display: inline; margin: 0; padding-left: 10px;">Acctbazaar</h3>
-                          </td>
-                      </tr>
-                  </table>
-                  <h2 class="title">Verify Your Account</h2> <br>
-                  <h3>Hi there,</h3>
-                  <p>Welcome to Acctbazaar, Your Premier P2P Marketplace for Social Media Accounts.</p>
-                  <div class="email-box-content">
-                ${data === null || data === void 0 ? void 0 : data.token}
-                      <p class="end">
-                          This is an automatically generated email please do not reply to this email. 
-                          If you face any issues, please contact us at help@acctbazaar.com
-                      </p>
-                     
-                      <p class="end">Copyright &copy; 2024 Acctbazaar Ltd.</p>
-                  </div>
-              </div>
-          </div>
-      </body>
-      </html>
+       <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #000 !important;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .email-box {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* mobile screens */
+        @media (max-width: 768px) {
+            .email-box {
+                max-width: 300px;
+            }
+        }
+
+        .title{
+            font-size: 23px;
+        }
+
+        .title, p {
+            text-align: center;
+        }
+
+        .box-row {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .account-name {
+            font-weight: 700;
+            font-size: 20px;
+            padding-bottom: 10px;
+        }
+
+        .social-icons {
+            text-align: center;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .social-icons span {
+            margin: 0 10px;
+            display: inline-block;
+            background-color: rgb(0, 110, 255);
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        .social-icons span a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn {
+            display: block;
+            width: fit-content;
+            padding: 12px 40px;
+            margin: 30px auto;
+            background-color: transparent;
+            color: rgb(0, 110, 255);
+            border-radius: 10px;
+            outline: none;
+            border: 1px solid rgb(0, 110, 255);
+            text-decoration: none; /* Use this for <a> based buttons */
+        }
+
+        .end {
+            font-size: 14px;
+            color: grey !important;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .end a {
+            color: grey;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
+                <tr>
+                    <td style="text-align: center;">
+                        <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
+                    </td>
+                </tr>
+            </table>
+            <h2 class="title">Verify Your Account</h2>
+            <p>Welcome to AcctPanel! We're thrilled to have you on board. <br> Your account has been successfully created. To access it, please use the code provided below.</p>
+            <div class="email-box-content">
+                <a href="" class="btn">${data === null || data === void 0 ? void 0 : data.token}</a>
+                <p class="end">
+                    This is an automatically generated email. Please do not reply to this email. 
+                    If you face any issues, please contact us at <a href="mailto:support@acctpanel.com">support@acctpanel.com</a>.
+                </p>
+                <hr>
+                <div class="social-icons">
+                    <span><a href="https://www.instagram.com/acctpanel/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="https://t.me/acctbazaarchannel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                </div>
+                <p class="end">Copyright &copy; 2024 Acctpanel.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
         `;
         },
     },
@@ -452,9 +493,9 @@ const EmailTemplates = {
     `,
     },
     orderSuccessful: {
-        subject: 'You have purchase a order',
-        html: (data) => `
-    <!DOCTYPE html>
+        subject: 'You have purchase a new service',
+        html: () => `
+     <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -465,25 +506,42 @@ const EmailTemplates = {
         body {
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: #fff;
             color: #000 !important;
             font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
         .email-box {
-            background-color: white;
+            background-color: #fff;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            max-width: 400px; /* Default max-width for larger devices */
+            max-width: 400px;
             width: 100%;
             margin: 0 auto;
         }
 
-        /* Adjust styles for mobile screens */
+        /* mobile screens */
         @media (max-width: 768px) {
             .email-box {
-                max-width: 300px; /* Smaller max-width for mobile screens */
+                max-width: 300px;
             }
+        }
+
+        .title{
+            font-size: 23px;
         }
 
         .title, p {
@@ -505,19 +563,19 @@ const EmailTemplates = {
 
         .social-icons {
             text-align: center;
-            margin: 20px 0; 
+            margin: 20px 0;
             color: white;
         }
 
         .social-icons span {
-            margin: 0 10px; 
+            margin: 0 10px;
             display: inline-block;
-            background-color: rgb(255, 85, 0);
+            background-color: rgb(0, 110, 255);
             border-radius: 50%;
-            padding: 10px; 
+            padding: 10px;
         }
 
-        .social-icons span a{
+        .social-icons span a {
             color: #fff;
             text-decoration: none;
         }
@@ -528,18 +586,32 @@ const EmailTemplates = {
             padding: 12px 40px;
             margin: 30px auto;
             background-color: transparent;
-            color: rgb(255, 85, 0);
+            color: rgb(0, 110, 255);
             border-radius: 10px;
             outline: none;
-            border: 1px solid rgb(255, 85, 0);
-            text-decoration: none;
+            border: 1px solid rgb(0, 110, 255);
+            text-decoration: none; /* Use this for <a> based buttons */
         }
-        
+
         .end {
             font-size: 14px;
             color: grey !important;
             padding-top: 20px;
             text-align: center;
+        }
+
+        .end a {
+            color: grey;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
         }
     </style>
 </head>
@@ -550,21 +622,25 @@ const EmailTemplates = {
                 <tr>
                     <td style="text-align: center;">
                         <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
-                        <h3 style="display: inline; margin: 0; padding-left: 10px;">Acctbazaar</h3>
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
                     </td>
                 </tr>
             </table>
             <h2 class="title">Congratulations!</h2>
-            <p>You successfully purchased ${data.accountName}.</p>
+            <!-- <img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722718801/la4nkevwu2o9twru9msj.png" alt="Course Image" class="course-image"> -->
+            <p>You just purchased a new service. </p>
             <div class="email-box-content">
-                <a href="${config_1.default.frontendUrl}/dashboard/myOrders" class="btn">View</a>
+                <a href="" class="btn">Go Home</a>
                 <p class="end">
-                    This is an automatically generated email please do not reply to this email. 
-                    If you face any issues, please contact us at help@acctbazaar.com
+                    This is an automatically generated email. Please do not reply to this email. 
+                    If you face any issues, please contact us at <a href="support@acctpanel.com">support@acctpanel.com</a>.
                 </p>
                 <hr>
-               
-                <p class="end">Copyright &copy; 2024 Acctbazaar Ltd.</p>
+                <div class="social-icons">
+                    <span><a href="https://www.instagram.com/acctpanel/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="https://t.me/acctbazaarchannel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                </div>
+                <p class="end">Copyright &copy; 2024 Acctpanel.</p>
             </div>
         </div>
     </div>

@@ -20,7 +20,7 @@ const auth =
       let verifiedUser = null;
 
       verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
-
+      console.log(verifiedUser);
       // check user exits and same role
       const queryUser = await prisma.user.findUnique({
         where: { id: verifiedUser.userId },
