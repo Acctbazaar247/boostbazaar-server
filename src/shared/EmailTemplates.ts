@@ -637,9 +637,10 @@ const EmailTemplates = {
             </table>
             <h2 class="title">Congratulations!</h2>
             <!-- <img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722718801/la4nkevwu2o9twru9msj.png" alt="Course Image" class="course-image"> -->
-            <p>You just purchased a new service. </p>
+            <p> Congratulation you’ve purchase a service, login to see the activity. 
+</p>
             <div class="email-box-content">
-                <a href="" class="btn">Go Home</a>
+                <a href="${config.frontendUrl}" class="btn">Visit</a>
                 <p class="end">
                     This is an automatically generated email. Please do not reply to this email. 
                     If you face any issues, please contact us at <a href="support@acctpanel.com">support@acctpanel.com</a>.
@@ -987,76 +988,160 @@ const EmailTemplates = {
   },
   sendReferral: {
     html: (data: { link: string }) => ` 
-    <!DOCTYPE html>
+     <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seller Requested</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f7f7f7;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #000 !important;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        .container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-    .header {
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
+        .email-box {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 400px;
+            width: 100%;
+            margin: 0 auto;
+        }
 
-    .content {
-      text-align: center;
-      margin-top: 2rem;
-    }
+        /* mobile screens */
+        @media (max-width: 768px) {
+            .email-box {
+                max-width: 300px;
+            }
+        }
 
-    .seller-info {
-      margin-top: 5px;
-    }
+        .title{
+            font-size: 23px;
+        }
 
-    .transaction-id {
-      font-weight: bold;
-    }
+        .title, p {
+            text-align: center;
+        }
 
-    .visit-site-button {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 8px 20px;
-      background-color: #2563eb;
-      color: #fff;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 4px;
-    }
-  </style>
+        .box-row {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .account-name {
+            font-weight: 700;
+            font-size: 20px;
+            padding-bottom: 10px;
+        }
+
+        .social-icons {
+            text-align: center;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .social-icons span {
+            margin: 0 10px;
+            display: inline-block;
+            background-color: rgb(0, 110, 255);
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        .social-icons span a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn {
+            display: block;
+            width: fit-content;
+            padding: 12px 40px;
+            margin: 30px auto;
+            background-color: transparent;
+            color: rgb(0, 110, 255);
+            border-radius: 10px;
+            outline: none;
+            border: 1px solid rgb(0, 110, 255);
+            text-decoration: none; /* Use this for <a> based buttons */
+        }
+
+        .end {
+            font-size: 14px;
+            color: grey !important;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .end a {
+            color: grey;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .course-image {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1> Hi there! </h1>
-    </div>  
-    <div class="content">
-      <p class="seller-info">
-      
-      Join   on BoostBazaar to enhance your social media presence effortlessly. BoostBazaar offers powerful tools and services to help you grow your online following, engage with your audience, and achieve your digital marketing goals. Let’s start boosting your success today!
-      </p>  
-      <a href="${
-        config.frontendUrl + data.link
-      }" style="color:#fff" class="visit-site-button">Visit site</a>
+    <div class="container">
+        <div class="email-box">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="table-layout: fixed;">
+                <tr>
+                    <td style="text-align: center;">
+                        <img src="${
+                          config.mainLogo
+                        }" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
+                    </td>
+                </tr>
+            </table>
+            <h2 class="title">Hi There!</h2>
+            <p>Welcome to AcctPanel! Enhance your social media presence effortlessly. 
+                Acctpanel offers powerful tools and services to help your online following, #
+                engage with yout audience, and achieve your digital marketing goals.</p>
+            <div class="email-box-content">
+                <a href="${
+                  config.frontendUrl + data.link
+                }" class="btn">Visit</a>
+                <p class="end">
+                    This is an automatically generated email. Please do not reply to this email. 
+                    If you face any issues, please contact us at <a href="mailto:support@acctpanel.com">support@acctpanel.com</a>.
+                </p>
+                <hr>
+                <div class="social-icons">
+                    <span><a href="https://www.instagram.com/acctpanel/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="http://t.me/acctpanel1"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                </div>
+                <p class="end">Copyright &copy; 2024 Acctpanel.</p>
+            </div>
+        </div>
     </div>
-  </div>
 </body>
 </html>
     
