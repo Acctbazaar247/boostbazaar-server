@@ -102,7 +102,7 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     if (isLessThenMin || isMoreThenMax) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, `The quantity cant be more then ${mainService.max} and less then ${mainService.min}`);
     }
-    const increaseRatePrice = parseFloat(mainService.rate) * (1 + config_1.default.japPercentage / 100);
+    const increaseRatePrice = (config_1.default.japPercentage / 100) * parseFloat(mainService.rate);
     // 1000 is 1 unit
     const calculatePerUnitCost = increaseRatePrice / 1000;
     const cost = calculatePerUnitCost * payload.quantity;

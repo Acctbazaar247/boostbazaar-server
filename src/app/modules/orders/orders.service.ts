@@ -101,7 +101,7 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     );
   }
   const increaseRatePrice =
-    parseFloat(mainService.rate) * (1 + config.japPercentage / 100);
+    (config.japPercentage / 100) * parseFloat(mainService.rate);
 
   // 1000 is 1 unit
   const calculatePerUnitCost = increaseRatePrice / 1000;
