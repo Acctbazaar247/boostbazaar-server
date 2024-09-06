@@ -136,7 +136,7 @@ const sendReferralEmail = async (
   await sendEmail(
     { to: sendTo },
     {
-      subject: `${user.name} Invites You to BoostBazaar`,
+      subject: `${user.name} Invites you to join Acctpanel`,
       html: EmailTemplates.sendReferral.html({
         link: `auth/sign-up?referralId=${userId}`,
       }),

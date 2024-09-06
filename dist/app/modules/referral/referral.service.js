@@ -134,7 +134,7 @@ const sendReferralEmail = (userId, sendTo) => __awaiter(void 0, void 0, void 0, 
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'user not found');
     }
     yield (0, sendEmail_1.default)({ to: sendTo }, {
-        subject: `${user.name} Invites You to BoostBazaar`,
+        subject: `${user.name} Invites you to join Acctpanel`,
         html: EmailTemplates_1.default.sendReferral.html({
             link: `auth/sign-up?referralId=${userId}`,
         }),
