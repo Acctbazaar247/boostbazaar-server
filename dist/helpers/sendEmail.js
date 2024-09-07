@@ -18,26 +18,26 @@ const config_1 = __importDefault(require("../config"));
 const ApiError_1 = __importDefault(require("../errors/ApiError"));
 /* eslint-disable @typescript-eslint/no-unused-vars */
 const sendEmail = ({ to, multi }, { subject, html, text }) => __awaiter(void 0, void 0, void 0, function* () {
-    // const transport = await nodemailer.createTransport({
-    //   service: 'gmail',
-    //   auth: {
-    //     user: config.emailUser,
-    //     pass: config.emailUserPass,
-    //   },
-    // });
     const transport = yield nodemailer_1.default.createTransport({
-        host: 'mail.privateemail.com', // or 'smtp.privateemail.com'
-        port: 465, // or 465 for SSL. or 587
-        secure: true, // true for 465, false for 587
+        service: 'gmail',
         auth: {
             user: config_1.default.emailUser,
             pass: config_1.default.emailUserPass,
         },
-        tls: {
-            // Enable TLS encryption
-            ciphers: 'SSLv3',
-        },
     });
+    // const transport = await nodemailer.createTransport({
+    //   host: 'mail.privateemail.com', // or 'smtp.privateemail.com'
+    //   port: 465, // or 465 for SSL. or 587
+    //   secure: true, // true for 465, false for 587
+    //   auth: {
+    //     user: config.emailUser,
+    //     pass: config.emailUserPass,
+    //   },
+    //   tls: {
+    //     // Enable TLS encryption
+    //     ciphers: 'SSLv3',
+    //   },
+    // });
     // send mail with defined transport object
     const mailOptions = {
         from: config_1.default.emailUser,
