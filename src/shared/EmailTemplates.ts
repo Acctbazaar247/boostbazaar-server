@@ -1123,8 +1123,8 @@ const EmailTemplates = {
             </table>
             <h2 class="title">Hi There!</h2>
             <p>Welcome to AcctPanel! Enhance your social media presence effortlessly. 
-                Acctpanel offers powerful tools and services to help your online following, #
-                engage with yout audience, and achieve your digital marketing goals.</p>
+                Acctpanel offers powerful tools and services to help your online following, 
+                engage with your audience, and achieve your digital marketing goals.</p>
             <div class="email-box-content">
                 <a href="${
                   config.frontendUrl + data.link
