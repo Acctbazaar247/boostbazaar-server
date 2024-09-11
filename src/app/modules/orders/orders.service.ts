@@ -103,9 +103,9 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
   }
   const increaseRatePrice =
     (config.japPercentage / 100) * parseFloat(mainService.rate);
-
+  const sum = increaseRatePrice + parseFloat(mainService.rate);
   // 1000 is 1 unit
-  const calculatePerUnitCost = increaseRatePrice / 1000;
+  const calculatePerUnitCost = sum / 1000;
   const cost = calculatePerUnitCost * payload.quantity;
   console.log(payload.orderById);
   const userCurrency = await prisma.currency.findUnique({
