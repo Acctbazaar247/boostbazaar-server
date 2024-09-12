@@ -70,7 +70,7 @@ const getAllCurrencyRequest = (filters, paginationOptions) => __awaiter(void 0, 
     const result = yield prisma_1.default.currencyRequest.findMany({
         where: whereConditions,
         skip,
-        take: 12,
+        take: limit,
         orderBy: paginationOptions.sortBy && paginationOptions.sortOrder
             ? {
                 [paginationOptions.sortBy]: paginationOptions.sortOrder,

@@ -63,7 +63,7 @@ const getAllCurrencyRequest = async (
   const result = await prisma.currencyRequest.findMany({
     where: whereConditions,
     skip,
-    take: 12,
+    take: limit,
     orderBy:
       paginationOptions.sortBy && paginationOptions.sortOrder
         ? {
