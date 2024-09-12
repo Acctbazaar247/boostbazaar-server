@@ -137,7 +137,7 @@ const EmailTemplates = {
                 <tr>
                     <td style="text-align: center;">
                         <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
-                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">Acctpanel</h2>
                     </td>
                 </tr>
             </table>
@@ -622,7 +622,7 @@ const EmailTemplates = {
                 <tr>
                     <td style="text-align: center;">
                         <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
-                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">Acctpanel</h2>
                     </td>
                 </tr>
             </table>
@@ -1100,7 +1100,7 @@ const EmailTemplates = {
                 <tr>
                     <td style="text-align: center;">
                         <img src="${config_1.default.mainLogo}" width="50" height="50" alt="" style="vertical-align: middle; margin-right: -15px;">
-                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">cctpanel</h2>
+                        <h2 style="display: inline; font-size: 25px; margin: 0; padding-left: 10px;">Acctpanel</h2>
                     </td>
                 </tr>
             </table>

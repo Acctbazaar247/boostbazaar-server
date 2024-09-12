@@ -26,7 +26,6 @@ const moduleRoutes = [
     path: '/profile',
     route: ProfileRoutes,
   },
-
   {
     path: '/currency',
     route: CurrencyRoutes,
@@ -39,7 +38,6 @@ const moduleRoutes = [
     path: '/uploadImg',
     route: fileUploadRoutes,
   },
-
   {
     path: '/referral',
     route: ReferralRoutes,
