@@ -80,6 +80,7 @@ const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, v
                     name: true,
                     profileImg: true,
                     id: true,
+                    email: true,
                 },
             },
         },

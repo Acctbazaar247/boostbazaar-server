@@ -70,6 +70,7 @@ const getAllOrders = async (
           name: true,
           profileImg: true,
           id: true,
+          email: true,
         },
       },
     },
