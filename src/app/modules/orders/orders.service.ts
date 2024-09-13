@@ -21,7 +21,7 @@ const getAllOrders = async (
   const { page, limit, skip } =
     paginationHelpers.calculatePagination(paginationOptions);
 
-  const { searchTerm, ...filterData } = filters;
+  const { searchTerm, email, ...filterData } = filters;
 
   const andCondition = [];
 
@@ -47,6 +47,15 @@ const getAllOrders = async (
         },
       })),
     });
+  }
+  if (email) {
+    andCondition.push({
+      AND: {
+        ownBy: {
+          email,
+        },
+      },
+    } as Prisma.OrdersWhereInput);
   }
 
   const whereConditions: Prisma.OrdersWhereInput =

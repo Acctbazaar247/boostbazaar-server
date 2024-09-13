@@ -37,7 +37,7 @@ const service_utils_1 = __importDefault(require("../service/service.utils"));
 const orders_constant_1 = require("./orders.constant");
 const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, skip } = paginationHelper_1.paginationHelpers.calculatePagination(paginationOptions);
-    const { searchTerm } = filters, filterData = __rest(filters, ["searchTerm"]);
+    const { searchTerm, email } = filters, filterData = __rest(filters, ["searchTerm", "email"]);
     const andCondition = [];
     if (searchTerm) {
         const searchAbleFields = orders_constant_1.ordersSearchableFields.map(single => {
@@ -60,6 +60,15 @@ const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, v
                     equals: filterData[key],
                 },
             })),
+        });
+    }
+    if (email) {
+        andCondition.push({
+            AND: {
+                ownBy: {
+                    email,
+                },
+            },
         });
     }
     const whereConditions = andCondition.length > 0 ? { AND: andCondition } : {};

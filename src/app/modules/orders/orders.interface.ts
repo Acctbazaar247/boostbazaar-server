@@ -1,5 +1,4 @@
-
-        export type IOrdersFilters = {
-            searchTerm?: string;
-          }; 
-        
+export type IOrdersFilters = {
+  searchTerm?: string;
+  email?: string;
+};
