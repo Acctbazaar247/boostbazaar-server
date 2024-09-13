@@ -116,8 +116,14 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
     const increaseRatePrice = (config_1.default.japPercentage / 100) * parseFloat(mainService.rate);
     const sum = increaseRatePrice + parseFloat(mainService.rate);
     // 1000 is 1 unit
-    const calculatePerUnitCost = sum / 1000;
-    const cost = calculatePerUnitCost * payload.quantity;
+    let cost = sum;
+    if (mainService.min === '1' && mainService.max === '1') {
+        cost = sum;
+    }
+    else {
+        const calculatePerUnitCost = sum / 1000;
+        cost = calculatePerUnitCost * payload.quantity;
+    }
     console.log(payload.orderById);
     const userCurrency = yield prisma_1.default.currency.findUnique({
         where: { ownById: payload.orderById },
