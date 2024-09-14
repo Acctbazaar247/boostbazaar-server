@@ -7,12 +7,13 @@ import httpStatus from 'http-status';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import UpdateCurrencyByRequestAfterPay from '../../../helpers/UpdateCurrencyByRequestAfterPay';
+import generateFlutterWavePaymentURL from '../../../helpers/createFlutterWaveInvoice';
 import createNowPayInvoice from '../../../helpers/creeateInvoice';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { initiatePayment } from '../../../helpers/paystackPayment';
 import sendEmail from '../../../helpers/sendEmail';
-import { IGenericResponse } from '../../../interfaces/common';
+import { EPaymentType, IGenericResponse } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
@@ -180,6 +181,45 @@ const createCurrencyRequestWithPayStack = async (
 
   return newCurrencyRequest;
 };
+const createCurrencyRequestWithFlutterwave = async (
+  payload: CurrencyRequest
+): Promise<ICreateCurrencyRequestRes | null> => {
+  const newCurrencyRequest = prisma.$transaction(async tx => {
+    const result = await tx.currencyRequest.create({
+      data: {
+        ...payload,
+        message: 'auto',
+        status: EStatusOfCurrencyRequest.pending,
+      },
+      include: {
+        ownBy: true,
+      },
+    });
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Invoice');
+    }
+
+    const fluterWave = await generateFlutterWavePaymentURL({
+      amount: result.amount,
+      customer_email: result.ownBy.email,
+      redirect_url: config.frontendUrl + '',
+      tx_ref: result.id,
+      paymentType: EPaymentType.addFunds,
+    });
+    // console.log({ fluterWave });
+    // const paystack = await initiatePayment(
+    //   payload.amount,
+    //   result.ownBy.email,
+    //   result.id,
+    //   result.id,
+    //   config.frontendUrl
+    // );
+    // return { ...result, url: request.data.authorization_url || '' };
+    return { ...result, url: fluterWave };
+  });
+
+  return newCurrencyRequest;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const payStackWebHook = async (data: any): Promise<void> => {
@@ -211,7 +251,6 @@ const payStackWebHook = async (data: any): Promise<void> => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = async (data: any): Promise<void> => {
   const { order_id, payment_status, price_amount } = data;
-  console.log('nowpayment', data);
   if (data.payment_status !== 'finished') {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
@@ -339,4 +378,5 @@ export const CurrencyRequestService = {
   createCurrencyRequestIpn,
   createCurrencyRequestWithPayStack,
   payStackWebHook,
+  createCurrencyRequestWithFlutterwave,
 };

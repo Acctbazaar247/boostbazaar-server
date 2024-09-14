@@ -29,11 +29,13 @@ const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const UpdateCurrencyByRequestAfterPay_1 = __importDefault(require("../../../helpers/UpdateCurrencyByRequestAfterPay"));
+const createFlutterWaveInvoice_1 = __importDefault(require("../../../helpers/createFlutterWaveInvoice"));
 const creeateInvoice_1 = __importDefault(require("../../../helpers/creeateInvoice"));
 const nowPaymentChecker_1 = __importDefault(require("../../../helpers/nowPaymentChecker"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const paystackPayment_1 = require("../../../helpers/paystackPayment");
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
+const common_1 = require("../../../interfaces/common");
 const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const currencyRequest_constant_1 = require("./currencyRequest.constant");
@@ -161,6 +163,37 @@ const createCurrencyRequestWithPayStack = (payload) => __awaiter(void 0, void 0,
     }));
     return newCurrencyRequest;
 });
+const createCurrencyRequestWithFlutterwave = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const newCurrencyRequest = prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+        const result = yield tx.currencyRequest.create({
+            data: Object.assign(Object.assign({}, payload), { message: 'auto', status: client_1.EStatusOfCurrencyRequest.pending }),
+            include: {
+                ownBy: true,
+            },
+        });
+        if (!result) {
+            throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to create Invoice');
+        }
+        const fluterWave = yield (0, createFlutterWaveInvoice_1.default)({
+            amount: result.amount,
+            customer_email: result.ownBy.email,
+            redirect_url: config_1.default.frontendUrl + '',
+            tx_ref: result.id,
+            paymentType: common_1.EPaymentType.addFunds,
+        });
+        // console.log({ fluterWave });
+        // const paystack = await initiatePayment(
+        //   payload.amount,
+        //   result.ownBy.email,
+        //   result.id,
+        //   result.id,
+        //   config.frontendUrl
+        // );
+        // return { ...result, url: request.data.authorization_url || '' };
+        return Object.assign(Object.assign({}, result), { url: fluterWave });
+    }));
+    return newCurrencyRequest;
+});
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(data.data.data.reference, 'from flutter wave s');
@@ -190,7 +223,6 @@ const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* ()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = (data) => __awaiter(void 0, void 0, void 0, function* () {
     const { order_id, payment_status, price_amount } = data;
-    console.log('nowpayment', data);
     if (data.payment_status !== 'finished') {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Sorry payment is not finished yet ');
     }
@@ -299,4 +331,5 @@ exports.CurrencyRequestService = {
     createCurrencyRequestIpn,
     createCurrencyRequestWithPayStack,
     payStackWebHook,
+    createCurrencyRequestWithFlutterwave,
 };

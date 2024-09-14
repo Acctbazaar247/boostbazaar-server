@@ -24,6 +24,12 @@ router.get(
 //   CurrencyRequestController.createCurrencyRequest
 // );
 router.post(
+  '/flutterwave',
+  auth(UserRole.user),
+  validateRequest(CurrencyRequestValidation.createValidation),
+  CurrencyRequestController.createCurrencyRequestWithFlutterwave
+);
+router.post(
   '/paystack',
   auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),

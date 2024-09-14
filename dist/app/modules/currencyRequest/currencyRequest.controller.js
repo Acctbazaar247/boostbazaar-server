@@ -85,6 +85,17 @@ const createCurrencyRequestWithPayStack = (0, catchAsync_1.default)((req, res) =
         data: result,
     });
 }));
+const createCurrencyRequestWithFlutterwave = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const CurrencyRequestData = req.body;
+    const user = req.user;
+    const result = yield currencyRequest_service_1.CurrencyRequestService.createCurrencyRequestWithFlutterwave(Object.assign(Object.assign({}, CurrencyRequestData), { ownById: user.userId }));
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest Created successfully!',
+        data: result,
+    });
+}));
 const getAllCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const filters = (0, pick_1.default)(req.query, [
         'searchTerm',
@@ -169,4 +180,5 @@ exports.CurrencyRequestController = {
     createCurrencyRequestIpn,
     createCurrencyRequestWithPayStack,
     payStackWebHook,
+    createCurrencyRequestWithFlutterwave,
 };

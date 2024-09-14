@@ -19,6 +19,7 @@ router.get('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRol
 //   validateRequest(CurrencyRequestValidation.createValidation),
 //   CurrencyRequestController.createCurrencyRequest
 // );
+router.post('/flutterwave', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithFlutterwave);
 router.post('/paystack', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithPayStack);
 router.post('/nowpayment', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestInvoice);
 router.post('/webhook/paystack', currencyRequest_controller_1.CurrencyRequestController.payStackWebHook);

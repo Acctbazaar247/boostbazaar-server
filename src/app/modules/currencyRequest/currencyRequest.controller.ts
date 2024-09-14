@@ -98,6 +98,24 @@ const createCurrencyRequestWithPayStack: RequestHandler = catchAsync(
     });
   }
 );
+const createCurrencyRequestWithFlutterwave: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const CurrencyRequestData = req.body;
+    const user = req.user as JwtPayload;
+
+    const result =
+      await CurrencyRequestService.createCurrencyRequestWithFlutterwave({
+        ...CurrencyRequestData,
+        ownById: user.userId,
+      });
+    sendResponse<CurrencyRequest>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'CurrencyRequest Created successfully!',
+      data: result,
+    });
+  }
+);
 
 const getAllCurrencyRequest = catchAsync(
   async (req: Request, res: Response) => {
@@ -215,4 +233,5 @@ export const CurrencyRequestController = {
   createCurrencyRequestIpn,
   createCurrencyRequestWithPayStack,
   payStackWebHook,
+  createCurrencyRequestWithFlutterwave,
 };
