@@ -128,6 +128,24 @@ const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: 'success',
     });
 }));
+const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const ipnData = req.body;
+    console.log({ ipnData });
+    if (ipnData.event === 'charge.completed') {
+        yield currencyRequest_service_1.CurrencyRequestService.flutterwaveWebHook({
+            data: ipnData.data,
+        });
+    }
+    // eslint-disable-next-line no-console
+    // console.log(ipnData);
+    // eslint-disable-next-line no-unused-vars
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest retrieved  successfully!',
+        data: 'success',
+    });
+}));
 const createCurrencyRequestIpn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     // eslint-disable-next-line no-unused-vars
@@ -181,4 +199,5 @@ exports.CurrencyRequestController = {
     createCurrencyRequestWithPayStack,
     payStackWebHook,
     createCurrencyRequestWithFlutterwave,
+    flutterwaveWebHook,
 };

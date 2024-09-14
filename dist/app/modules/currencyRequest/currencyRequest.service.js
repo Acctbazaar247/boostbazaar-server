@@ -196,7 +196,6 @@ const createCurrencyRequestWithFlutterwave = (payload) => __awaiter(void 0, void
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(data.data.data.reference, 'from flutter wave s');
     // console.log(data.data.reference);
     const order_id = data.data.data.reference;
     console.log({ order_id });
@@ -213,12 +212,25 @@ const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* ()
         payment_status,
         price_amount: isCurrencyRequestExits.amount,
     });
-    // const result = await prisma.currencyRequest.findUnique({
-    //   where: {
-    //     id,
-    //   },
-    // });
-    // return result;
+});
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const flutterwaveWebHook = (data) => __awaiter(void 0, void 0, void 0, function* () {
+    // console.log(data.data.reference);
+    const order_id = data.tx_ref.split('_$_')[1];
+    console.log({ data, order_id });
+    const payment_status = 'finished';
+    const isCurrencyRequestExits = yield prisma_1.default.currencyRequest.findUnique({
+        where: { id: order_id },
+    });
+    if (!isCurrencyRequestExits) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'currency request not found!');
+    }
+    // change status of currency Request and add money to user
+    yield (0, UpdateCurrencyByRequestAfterPay_1.default)({
+        order_id,
+        payment_status,
+        price_amount: isCurrencyRequestExits.amount,
+    });
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -332,4 +344,5 @@ exports.CurrencyRequestService = {
     createCurrencyRequestWithPayStack,
     payStackWebHook,
     createCurrencyRequestWithFlutterwave,
+    flutterwaveWebHook,
 };

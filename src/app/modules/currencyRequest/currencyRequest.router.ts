@@ -44,6 +44,10 @@ router.post(
 
 router.post('/webhook/paystack', CurrencyRequestController.payStackWebHook);
 router.post(
+  '/webhook/flutterwave',
+  CurrencyRequestController.flutterwaveWebHook
+);
+router.post(
   '/webhook/nowpayment',
   CurrencyRequestController.createCurrencyRequestIpn
 );

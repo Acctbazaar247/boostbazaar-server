@@ -23,6 +23,7 @@ router.post('/flutterwave', (0, auth_1.default)(client_1.UserRole.user), (0, val
 router.post('/paystack', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithPayStack);
 router.post('/nowpayment', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestInvoice);
 router.post('/webhook/paystack', currencyRequest_controller_1.CurrencyRequestController.payStackWebHook);
+router.post('/webhook/flutterwave', currencyRequest_controller_1.CurrencyRequestController.flutterwaveWebHook);
 router.post('/webhook/nowpayment', currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestIpn);
 router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.updateValidation), currencyRequest_controller_1.CurrencyRequestController.updateCurrencyRequest);
 router.delete('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.admin), currencyRequest_controller_1.CurrencyRequestController.deleteCurrencyRequest);
