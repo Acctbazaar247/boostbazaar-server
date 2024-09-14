@@ -243,7 +243,7 @@ const payStackWebHook = async (data: any): Promise<void> => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const flutterwaveWebHook = async (data: any): Promise<void> => {
   // console.log(data.data.reference);
-  const order_id = data.tx_ref.split('_$_')[1];
+  const order_id = data.txRef.split('_$_')[1];
   console.log({ data, order_id });
   const payment_status = 'finished';
   const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({
