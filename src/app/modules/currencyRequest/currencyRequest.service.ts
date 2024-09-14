@@ -78,6 +78,7 @@ const getAllCurrencyRequest = async (
           name: true,
           profileImg: true,
           id: true,
+          email: true,
         },
       },
     },
