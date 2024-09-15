@@ -215,7 +215,6 @@ const payStackWebHook = (data) => __awaiter(void 0, void 0, void 0, function* ()
 });
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const flutterwaveWebHook = (data) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(data.data.txRef.split('_$_'));
     const order_id = data.data.tx_ref.split('_$_')[1];
     console.log({ data, order_id });
     const payment_status = 'finished';
