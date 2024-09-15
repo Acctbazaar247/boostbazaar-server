@@ -263,6 +263,7 @@ const flutterwaveWebHook = async (data: any): Promise<void> => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = async (data: any): Promise<void> => {
   const { order_id, payment_status, price_amount } = data;
+  console.log('Ipn', data);
   if (data.payment_status !== 'finished') {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
