@@ -131,9 +131,9 @@ const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
 const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     console.log({ ipnData });
-    if (ipnData.status === 'successful') {
+    if (ipnData.event === 'charge.completed') {
         yield currencyRequest_service_1.CurrencyRequestService.flutterwaveWebHook({
-            data: ipnData,
+            data: ipnData.data,
         });
     }
     // eslint-disable-next-line no-console

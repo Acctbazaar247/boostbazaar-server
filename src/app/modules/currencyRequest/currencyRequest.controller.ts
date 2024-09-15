@@ -164,9 +164,9 @@ const flutterwaveWebHook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
     console.log({ ipnData });
-    if (ipnData.status === 'successful') {
+    if (ipnData.event === 'charge.completed') {
       await CurrencyRequestService.flutterwaveWebHook({
-        data: ipnData,
+        data: ipnData.data,
       });
     }
     // eslint-disable-next-line no-console
