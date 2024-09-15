@@ -1,2 +1,2 @@
-export const currencyRequestSearchableFields = ['id', 'ownById', 'email'];
+export const currencyRequestSearchableFields = ['id', 'ownById'];
 export const currencyRequestFilterAbleFields = ['ownById'];

@@ -65,7 +65,7 @@ const getAllOrders = (filters, paginationOptions) => __awaiter(void 0, void 0, v
     if (email) {
         andCondition.push({
             AND: {
-                ownBy: {
+                orderBy: {
                     email,
                 },
             },

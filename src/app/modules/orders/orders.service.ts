@@ -51,7 +51,7 @@ const getAllOrders = async (
   if (email) {
     andCondition.push({
       AND: {
-        ownBy: {
+        orderBy: {
           email,
         },
       },
