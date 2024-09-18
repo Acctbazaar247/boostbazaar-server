@@ -9,7 +9,6 @@ const uploadSingleFile: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const data = req.body.uploadedImg;
     const result = { url: data.url };
-    console.log(data.url);
     sendResponse<{ url: string }>(res, {
       statusCode: httpStatus.OK,
       success: true,

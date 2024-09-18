@@ -11,7 +11,9 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const user_controller_1 = require("./user.controller");
 const user_validation_1 = require("./user.validation");
 const router = express_1.default.Router();
-router.get('/', (0, auth_1.default)(client_1.UserRole.admin), user_controller_1.UserController.getAllUser);
+router.get('/', 
+// auth(UserRole.admin),
+user_controller_1.UserController.getAllUser);
 router.get('/admin/overview', (0, auth_1.default)(client_1.UserRole.admin), user_controller_1.UserController.adminOverview);
 // router.get(
 //   '/seller/overview',

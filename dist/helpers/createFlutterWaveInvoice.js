@@ -30,7 +30,7 @@ function generateFlutterWavePaymentURL(paymentData) {
                 email: customer_email,
             },
         };
-        console.log(`Bearer ${config_1.default.flutterwave_public_key}`);
+        console.log(`Bearer flutterwave ${customer_email}`);
         try {
             const response = yield axios_1.default.post('https://api.flutterwave.com/v3/payments', requestData, {
                 headers: {

@@ -16,6 +16,7 @@ exports.CurrencyRequestController = void 0;
 const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const pagination_1 = require("../../../constants/pagination");
+const flutterwavePaymentChecker_1 = __importDefault(require("../../../helpers/flutterwavePaymentChecker"));
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
 const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
@@ -131,6 +132,7 @@ const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
 const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     console.log({ ipnData });
+    yield (0, flutterwavePaymentChecker_1.default)(ipnData.data.txRef);
     if (ipnData.event === 'charge.completed') {
         yield currencyRequest_service_1.CurrencyRequestService.flutterwaveWebHook({
             data: ipnData.data,
@@ -143,7 +145,7 @@ const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(voi
         statusCode: http_status_1.default.OK,
         success: true,
         message: 'CurrencyRequest retrieved  successfully!',
-        data: 'success',
+        data: 'message',
     });
 }));
 const createCurrencyRequestIpn = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {

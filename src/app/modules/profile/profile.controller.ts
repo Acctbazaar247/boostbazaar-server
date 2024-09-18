@@ -12,7 +12,6 @@ import { UserService } from '../user/user.service';
 const getProfile: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { userId, role } = req.user as JwtPayload;
-    console.log(userId, role);
     const result = await UserService.getSingleUser(userId);
     if (!result) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'user not found');

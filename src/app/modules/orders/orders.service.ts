@@ -122,8 +122,6 @@ const createOrders = async (payload: Orders): Promise<Orders | null> => {
     const calculatePerUnitCost = sum / 1000;
     cost = calculatePerUnitCost * payload.quantity;
   }
-
-  console.log(payload.orderById);
   const userCurrency = await prisma.currency.findUnique({
     where: { ownById: payload.orderById },
   });

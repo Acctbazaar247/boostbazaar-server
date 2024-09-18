@@ -18,9 +18,8 @@ const auth =
 
       // verify token
       let verifiedUser = null;
-
       verifiedUser = jwtHelpers.verifyToken(token, config.jwt.secret as Secret);
-      console.log(verifiedUser);
+
       // check user exits and same role
       const queryUser = await prisma.user.findUnique({
         where: { id: verifiedUser.userId },
@@ -45,7 +44,6 @@ const auth =
       req.user = verifiedUser; // role  , userid
 
       // role diye guard korar jnno
-      console.log(queryUser, requiredRoles);
       if (requiredRoles.length && !requiredRoles.includes(queryUser.role)) {
         throw new ApiError(httpStatus.FORBIDDEN, 'Forbidden');
       }

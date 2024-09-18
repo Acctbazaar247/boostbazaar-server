@@ -30,7 +30,7 @@ export default async function generateFlutterWavePaymentURL(
       email: customer_email,
     },
   };
-  console.log(`Bearer ${config.flutterwave_public_key}`);
+  console.log(`Bearer flutterwave ${customer_email}`);
   try {
     const response = await axios.post(
       'https://api.flutterwave.com/v3/payments',

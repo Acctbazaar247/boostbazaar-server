@@ -124,7 +124,6 @@ const createOrders = (payload) => __awaiter(void 0, void 0, void 0, function* ()
         const calculatePerUnitCost = sum / 1000;
         cost = calculatePerUnitCost * payload.quantity;
     }
-    console.log(payload.orderById);
     const userCurrency = yield prisma_1.default.currency.findUnique({
         where: { ownById: payload.orderById },
     });

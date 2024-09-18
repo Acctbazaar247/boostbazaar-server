@@ -5,6 +5,7 @@ import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../../../config';
 import { paginationFields } from '../../../constants/pagination';
+import flutterwavePaymentChecker from '../../../helpers/flutterwavePaymentChecker';
 import sendEmail from '../../../helpers/sendEmail';
 import EmailTemplates from '../../../shared/EmailTemplates';
 import catchAsync from '../../../shared/catchAsync';
@@ -164,6 +165,7 @@ const flutterwaveWebHook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
     console.log({ ipnData });
+    await flutterwavePaymentChecker(ipnData.data.txRef);
     if (ipnData.event === 'charge.completed') {
       await CurrencyRequestService.flutterwaveWebHook({
         data: ipnData.data,
@@ -177,7 +179,7 @@ const flutterwaveWebHook: RequestHandler = catchAsync(
       statusCode: httpStatus.OK,
       success: true,
       message: 'CurrencyRequest retrieved  successfully!',
-      data: 'success',
+      data: 'message',
     });
   }
 );
