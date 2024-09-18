@@ -32,7 +32,7 @@ function flutterwavePaymentChecker(txRef) {
             });
             console.log(response.data, 'checker');
             // Check if the response status is successful
-            if (response.data.status === 'success') {
+            if (response.data.data.status === 'success') {
                 // Return the data or status from the Flutterwave API response
                 return response.data;
             }
