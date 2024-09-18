@@ -30,7 +30,7 @@ function flutterwavePaymentChecker(txRef) {
                     'Content-Type': 'application/json',
                 },
             });
-            console.log(response.data);
+            console.log(response.data, 'checker');
             // Check if the response status is successful
             if (response.data.status === 'success') {
                 // Return the data or status from the Flutterwave API response
