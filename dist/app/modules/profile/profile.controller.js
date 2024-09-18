@@ -21,7 +21,7 @@ const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const user_service_1 = require("../user/user.service");
 const getProfile = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId, role } = req.user;
+    const { userId } = req.user;
     const result = yield user_service_1.UserService.getSingleUser(userId);
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'user not found');
