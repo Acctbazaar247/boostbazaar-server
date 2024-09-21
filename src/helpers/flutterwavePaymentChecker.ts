@@ -7,6 +7,7 @@ const FLUTTERWAVE_API_URL = 'https://api.flutterwave.com/v3/transactions';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function flutterwavePaymentChecker(txRef: string): Promise<any> {
+  console.log({ txRef });
   try {
     const response = await axios.get(
       `${FLUTTERWAVE_API_URL}/verify_by_reference`,
