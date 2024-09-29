@@ -213,7 +213,6 @@ const userSpend = (payload) => __awaiter(void 0, void 0, void 0, function* () {
             orderById: payload, // Replace this with the actual ID you want to filter by
         },
     });
-    console.log({ totalCharge });
     return {
         spend: totalCharge._sum.charge || 0,
     };

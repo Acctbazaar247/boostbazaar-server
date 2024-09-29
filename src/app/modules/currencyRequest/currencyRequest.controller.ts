@@ -166,7 +166,10 @@ const flutterwaveWebHook: RequestHandler = catchAsync(
     const ipnData = req.body;
     console.log({ ipnData });
     await flutterwavePaymentChecker(ipnData.data.tx_ref);
-    if (ipnData.event === 'charge.completed') {
+    if (
+      ipnData.event === 'charge.completed' &&
+      ipnData.data.status === 'successful'
+    ) {
       await CurrencyRequestService.flutterwaveWebHook({
         data: ipnData.data,
       });
