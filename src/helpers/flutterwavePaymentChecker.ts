@@ -23,7 +23,10 @@ async function flutterwavePaymentChecker(txRef: string): Promise<any> {
     );
     console.log(response.data, 'checker');
     // Check if the response status is successful
-    if (response.data.data.status === 'success') {
+    if (
+      response.data.data.status === 'success' ||
+      response.data.data.status === 'successful'
+    ) {
       // Return the data or status from the Flutterwave API response
       return response.data;
     } else {
