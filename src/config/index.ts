@@ -32,8 +32,11 @@ export default {
   cloudApiSecret: process.env.CLOUD_API_SECRET,
   flutterwave_public_key: process.env.FLUTTERWAVE_PUBLIC_KEY,
   cryptomus_key: process.env.CRYPTOMUS_API_KEY,
-
+  smsPoolApiKey: process.env.SMSPOOL_API_KEY,
   referralAmount: parseInt(process.env.REFERRAL_AMOUNT as string),
+  smsPoolServiceChargeInPercentage: parseFloat(
+    process.env.SMSPOOL_SERVICE_CHARGE_IN_PERCENTAGE as string
+  ),
   referralFirstPayAmount: parseInt(
     process.env.REFERRAL_FIRST_PAY_AMOUNT as string
   ),

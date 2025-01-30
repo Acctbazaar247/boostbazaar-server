@@ -13,6 +13,7 @@ const profile_router_1 = require("../modules/profile/profile.router");
 const referral_router_1 = require("../modules/referral/referral.router");
 const review_router_1 = require("../modules/review/review.router");
 const service_router_1 = require("../modules/service/service.router");
+const smsPool_router_1 = require("../modules/smsPool/smsPool.router");
 const tickets_router_1 = require("../modules/tickets/tickets.router");
 const user_router_1 = require("../modules/user/user.router");
 const router = express_1.default.Router();
@@ -61,6 +62,10 @@ const moduleRoutes = [
     {
         path: '/order',
         route: orders_router_1.OrdersRoutes,
+    },
+    {
+        path: '/sms-pool',
+        route: smsPool_router_1.SmsPoolRoutes,
     },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

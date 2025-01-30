@@ -34,6 +34,7 @@ model User {
   ReferredByMe    Referral[]        @relation(name: "Referral_By")
   Tickets         Tickets[]
   Review          Review[]
+  SmsPoolOrder    SmsPoolOrder[]
 }
 
 enum EPayWith {
@@ -89,6 +90,19 @@ model Orders {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   status          EOrderStatus?    @default(completed)
+}
+
+model SmsPoolOrder {
+  id          String   @id @unique @default(uuid())
+  serviceId   String
+  countryId   String
+  orderId     String
+  phoneNumber String
+  orderById   String
+  orderBy     User     @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  cost        Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 enum EOrderStatus {
