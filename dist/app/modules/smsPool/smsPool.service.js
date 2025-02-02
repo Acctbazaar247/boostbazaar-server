@@ -88,7 +88,7 @@ const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, functi
         const lastCost = smsConst + orderServiceCharge;
         console.log('cost', smsConst, lastCost);
         const smsPoolOrder = yield tx.smsPoolOrder.create({
-            data: Object.assign(Object.assign({}, payload), { cost: lastCost, orderId: orderResponse.order_id }),
+            data: Object.assign(Object.assign({}, payload), { cost: lastCost, orderId: orderResponse.order_id, phoneNumber: orderResponse.phonenumber }),
         });
         const currency = yield tx.currency.update({
             where: { id: userCurrency.id },
@@ -105,9 +105,14 @@ const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, functi
     }));
     return newSmsPoolOrder;
 });
+const getAllOrderHistoryFromSmsPool = () => __awaiter(void 0, void 0, void 0, function* () {
+    const smsPoolOrders = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory();
+    return smsPoolOrders;
+});
 exports.SmsPoolService = {
     getAllSmsPool,
     // createSmsPool,
     createSmsPoolOrder,
     getSingleSmsPoolServiceCountry,
+    getAllOrderHistoryFromSmsPool,
 };

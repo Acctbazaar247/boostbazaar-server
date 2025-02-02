@@ -53,8 +53,23 @@ const allService = () => __awaiter(void 0, void 0, void 0, function* () {
     const response = yield (0, axios_1.default)(config);
     return response.data;
 });
+const getAllOrderHistory = () => __awaiter(void 0, void 0, void 0, function* () {
+    const data = new form_data_1.default();
+    data.append('key', config_1.default.smsPoolApiKey);
+    //   data.append('search', 'K87OJMXH,CNGRCJQ4');
+    const smsPoolHistoryConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://api.smspool.net/request/history',
+        headers: Object.assign({}, data.getHeaders()),
+        data: data,
+    };
+    const response = yield (0, axios_1.default)(smsPoolHistoryConfig);
+    return response.data;
+});
 exports.smsPoolRequest = {
     makeOrderRequest,
     getOrderStatus,
     allService,
+    getAllOrderHistory,
 };

@@ -1,8 +1,11 @@
 import express from 'express';
 import { AuthRoutes } from '../modules/auth/auth.route';
+import { BankRoutes } from '../modules/bank/bank.router';
+import { CryptoBankRoutes } from '../modules/cryptoBank/cryptoBank.router';
 import { CurrencyRoutes } from '../modules/currency/currency.router';
 import { CurrencyRequestRoutes } from '../modules/currencyRequest/currencyRequest.router';
 import { fileUploadRoutes } from '../modules/fileUpload/fileUpload.route';
+import { ManualCurrencyRequestRoutes } from '../modules/manualCurrencyRequest/manualCurrencyRequest.router';
 import { OrdersRoutes } from '../modules/orders/orders.router';
 import { ProfileRoutes } from '../modules/profile/profile.router';
 import { ReferralRoutes } from '../modules/referral/referral.router';
@@ -62,6 +65,18 @@ const moduleRoutes = [
   {
     path: '/sms-pool',
     route: SmsPoolRoutes,
+  },
+  {
+    path: '/bank',
+    route: BankRoutes,
+  },
+  {
+    path: '/crypto-bank',
+    route: CryptoBankRoutes,
+  },
+  {
+    path: '/manual-currency-request',
+    route: ManualCurrencyRequestRoutes,
   },
 ];
 

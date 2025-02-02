@@ -5,7 +5,11 @@ import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
-import { TSmsPoolService, TSmsPoolServiceCountry } from './smsPool.interface';
+import {
+  TSmsPoolOrderHistory,
+  TSmsPoolService,
+  TSmsPoolServiceCountry,
+} from './smsPool.interface';
 import { SmsPoolService } from './smsPool.service';
 
 // const createSmsPool: RequestHandler = catchAsync(
@@ -60,9 +64,20 @@ const getSingleSmsPool: RequestHandler = catchAsync(
     });
   }
 );
-
+const getAllOrderHistoryFromSmsPool = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await SmsPoolService.getAllOrderHistoryFromSmsPool();
+    sendResponse<TSmsPoolOrderHistory[]>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'SmsPoolOrderHistory retrieved successfully!',
+      data: result,
+    });
+  }
+);
 export const SmsPoolController = {
   getAllSmsPoolService,
   getSingleSmsPool,
   createSmsPoolOrder,
+  getAllOrderHistoryFromSmsPool,
 };

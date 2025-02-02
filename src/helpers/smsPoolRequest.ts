@@ -83,8 +83,26 @@ const allService = async () => {
   const response = await axios(config);
   return response.data;
 };
+
+const getAllOrderHistory = async () => {
+  const data = new FormData();
+  data.append('key', config.smsPoolApiKey);
+  //   data.append('search', 'K87OJMXH,CNGRCJQ4');
+  const smsPoolHistoryConfig = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://api.smspool.net/request/history',
+    headers: {
+      ...data.getHeaders(),
+    },
+    data: data,
+  };
+  const response = await axios(smsPoolHistoryConfig);
+  return response.data;
+};
 export const smsPoolRequest = {
   makeOrderRequest,
   getOrderStatus,
   allService,
+  getAllOrderHistory,
 };

@@ -26,15 +26,16 @@ model User {
   isBlocked          Boolean?
   failedLoginAttempt Int?     @default(0)
 
-  Orders          Orders[]
-  Currency        Currency?
-  CurrencyRequest CurrencyRequest[]
-  VerificationOtp VerificationOtp[]
-  Referral        Referral?         @relation(name: "Referral_OwnBy")
-  ReferredByMe    Referral[]        @relation(name: "Referral_By")
-  Tickets         Tickets[]
-  Review          Review[]
-  SmsPoolOrder    SmsPoolOrder[]
+  Orders                Orders[]
+  Currency              Currency?
+  CurrencyRequest       CurrencyRequest[]
+  VerificationOtp       VerificationOtp[]
+  Referral              Referral?               @relation(name: "Referral_OwnBy")
+  ReferredByMe          Referral[]              @relation(name: "Referral_By")
+  Tickets               Tickets[]
+  Review                Review[]
+  SmsPoolOrder          SmsPoolOrder[]
+  ManualCurrencyRequest ManualCurrencyRequest[]
 }
 
 enum EPayWith {
@@ -92,17 +93,30 @@ model Orders {
   status          EOrderStatus?    @default(completed)
 }
 
+enum ESmsPoolOrderStatus {
+  pending
+  completed
+  cancelled
+  refunded
+}
+
 model SmsPoolOrder {
-  id          String   @id @unique @default(uuid())
+  id          String              @id @unique @default(uuid())
   serviceId   String
   countryId   String
   orderId     String
   phoneNumber String
+  number      String
+  pool        String
+  cc          String
   orderById   String
-  orderBy     User     @relation(fields: [orderById], references: [id], onDelete: Cascade)
+  country     String
+  service     String
+  status      ESmsPoolOrderStatus @default(pending)
+  orderBy     User                @relation(fields: [orderById], references: [id], onDelete: Cascade)
   cost        Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
 }
 
 enum EOrderStatus {
@@ -185,4 +199,60 @@ model Review {
   star      Int      @default(1)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum EStatusOfManualCurrencyRequest {
+  pending
+  approved
+  denied
+}
+
+model ManualCurrencyRequest {
+  id              String                         @id @unique @default(uuid())
+  message         String?
+  image           String?
+  requestedAmount Float
+  receivedAmount  Float?
+  ownById         String
+  status          EStatusOfManualCurrencyRequest @default(pending)
+  accountName     String?
+  accountNumber   String?
+  bankName        String?
+  transactionHash String?
+  dollarRate      Float?
+  ownBy           User                           @relation(fields: [ownById], references: [id], onDelete: Cascade)
+  createdAt       DateTime                       @default(now())
+  updatedAt       DateTime                       @updatedAt
+  bankId          String?
+  bank            Bank?                          @relation(fields: [bankId], references: [id], onDelete: Cascade)
+  cryptoBankId    String?
+  cryptoBank      CryptoBank?                    @relation(fields: [cryptoBankId], references: [id], onDelete: Cascade)
+}
+
+model Bank {
+  id                    String                  @id @unique @default(uuid())
+  accountNumber         String
+  accountName           String
+  bankName              String
+  isActive              Boolean                 @default(true)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  ManualCurrencyRequest ManualCurrencyRequest[]
+}
+
+enum ECryptoType {
+  USDT
+  USDC
+  BTC
+  SOLANA
+}
+
+model CryptoBank {
+  id                    String                  @id @unique @default(uuid())
+  walletAddress         String
+  name                  String
+  isActive              Boolean                 @default(true)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  ManualCurrencyRequest ManualCurrencyRequest[]
 }

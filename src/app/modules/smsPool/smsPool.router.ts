@@ -7,6 +7,7 @@ import { SmsPoolValidation } from './smsPool.validation';
 const router = express.Router();
 
 router.get('/', SmsPoolController.getAllSmsPoolService);
+router.get('/order/history', SmsPoolController.getAllOrderHistoryFromSmsPool);
 router.get('/:id', SmsPoolController.getSingleSmsPool);
 
 // router.post(

@@ -12,6 +12,7 @@ const smsPool_controller_1 = require("./smsPool.controller");
 const smsPool_validation_1 = require("./smsPool.validation");
 const router = express_1.default.Router();
 router.get('/', smsPool_controller_1.SmsPoolController.getAllSmsPoolService);
+router.get('/order/history', smsPool_controller_1.SmsPoolController.getAllOrderHistoryFromSmsPool);
 router.get('/:id', smsPool_controller_1.SmsPoolController.getSingleSmsPool);
 // router.post(
 //   '/',

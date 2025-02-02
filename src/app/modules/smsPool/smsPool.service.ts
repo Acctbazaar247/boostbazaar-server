@@ -6,7 +6,11 @@ import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { smsPoolRequest } from '../../../helpers/smsPoolRequest';
 import prisma from '../../../shared/prisma';
-import { TSmsPoolService, TSmsPoolServiceCountry } from './smsPool.interface';
+import {
+  TSmsPoolOrderHistory,
+  TSmsPoolService,
+  TSmsPoolServiceCountry,
+} from './smsPool.interface';
 
 const getAllSmsPool = async (): Promise<TSmsPoolService[]> => {
   return smsPoolRequest.allService();
@@ -89,7 +93,17 @@ const createSmsPoolOrder = async (
     const lastCost = smsConst + orderServiceCharge;
     console.log('cost', smsConst, lastCost);
     const smsPoolOrder = await tx.smsPoolOrder.create({
-      data: { ...payload, cost: lastCost, orderId: orderResponse.order_id },
+      data: {
+        ...payload,
+        cost: lastCost,
+        country: orderResponse.country,
+        pool: orderResponse.pool.toString(),
+        cc: orderResponse.cc,
+        service: orderResponse.service,
+        orderId: orderResponse.order_id,
+        number: orderResponse.number.toString(),
+        phoneNumber: orderResponse.phonenumber,
+      },
     });
     const currency = await tx.currency.update({
       where: { id: userCurrency.id },
@@ -106,10 +120,17 @@ const createSmsPoolOrder = async (
   });
   return newSmsPoolOrder;
 };
+const getAllOrderHistoryFromSmsPool = async (): Promise<
+  TSmsPoolOrderHistory[]
+> => {
+  const smsPoolOrders = await smsPoolRequest.getAllOrderHistory();
+  return smsPoolOrders;
+};
 
 export const SmsPoolService = {
   getAllSmsPool,
   // createSmsPool,
   createSmsPoolOrder,
   getSingleSmsPoolServiceCountry,
+  getAllOrderHistoryFromSmsPool,
 };
