@@ -41,4 +41,5 @@ exports.default = {
     japApiKey: process.env.JAP_API_KEY,
     japUrl: 'https://justanotherpanel.com/api/v2',
     japPercentage: parseFloat(process.env.JAP_RATE_PERCENTAGE),
+    manualDollarRate: parseFloat(process.env.MANUAL_DOLLAR_RATE),
 };

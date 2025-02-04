@@ -32,6 +32,24 @@ type IOrderResponse = {
   cost: string;
   cost_in_cents: number;
 };
+export type IOrderHistory = {
+  cost: string;
+  order_code: string;
+  phonenumber: string;
+  cc: string;
+  number: string;
+  code: string;
+  full_code: string;
+  short_name: string;
+  service: string;
+  status: string;
+  pool_name: string;
+  pool: number;
+  timestamp: string;
+  completed_on: string;
+  expiry: number;
+  time_left: number;
+};
 const makeOrderRequest = async ({
   serviceId,
   countryId,
@@ -84,10 +102,16 @@ const allService = async () => {
   return response.data;
 };
 
-const getAllOrderHistory = async () => {
+const getAllOrderHistory = async ({
+  orderId,
+}: {
+  orderId?: string;
+}): Promise<IOrderHistory[]> => {
   const data = new FormData();
   data.append('key', config.smsPoolApiKey);
-  //   data.append('search', 'K87OJMXH,CNGRCJQ4');
+  if (orderId) {
+    data.append('search', orderId);
+  }
   const smsPoolHistoryConfig = {
     method: 'post',
     maxBodyLength: Infinity,
@@ -100,9 +124,28 @@ const getAllOrderHistory = async () => {
   const response = await axios(smsPoolHistoryConfig);
   return response.data;
 };
+
+const refundOrder = async ({ orderId }: { orderId: string }) => {
+  const data = new FormData();
+  data.append('key', config.smsPoolApiKey);
+  data.append('orderid', orderId);
+  console.log('provided order id', orderId);
+  const smsPoolCancelConfig = {
+    method: 'post',
+    maxBodyLength: Infinity,
+    url: 'https://api.smspool.net/sms/cancel',
+    headers: {
+      ...data.getHeaders(),
+    },
+    data: data,
+  };
+  const response = await axios(smsPoolCancelConfig);
+  return response.data;
+};
 export const smsPoolRequest = {
   makeOrderRequest,
   getOrderStatus,
   allService,
   getAllOrderHistory,
+  refundOrder,
 };

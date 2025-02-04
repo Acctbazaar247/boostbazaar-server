@@ -66,7 +66,10 @@ const getSingleSmsPool: RequestHandler = catchAsync(
 );
 const getAllOrderHistoryFromSmsPool = catchAsync(
   async (req: Request, res: Response) => {
-    const result = await SmsPoolService.getAllOrderHistoryFromSmsPool();
+    const orderId = req.query.orderId;
+    const result = await SmsPoolService.getAllOrderHistoryFromSmsPool({
+      orderId: orderId as string | undefined,
+    });
     sendResponse<TSmsPoolOrderHistory[]>(res, {
       statusCode: httpStatus.OK,
       success: true,

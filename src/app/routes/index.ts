@@ -12,6 +12,7 @@ import { ReferralRoutes } from '../modules/referral/referral.router';
 import { ReviewRoutes } from '../modules/review/review.router';
 import { ServiceRoutes } from '../modules/service/service.router';
 import { SmsPoolRoutes } from '../modules/smsPool/smsPool.router';
+import { SmsPoolOrderRoutes } from '../modules/smsPoolOrder/smsPoolOrder.router';
 import { TicketsRoutes } from '../modules/tickets/tickets.router';
 import { UserRoutes } from '../modules/user/user.router';
 const router = express.Router();
@@ -65,6 +66,10 @@ const moduleRoutes = [
   {
     path: '/sms-pool',
     route: SmsPoolRoutes,
+  },
+  {
+    path: '/sms-pool-order',
+    route: SmsPoolOrderRoutes,
   },
   {
     path: '/bank',
