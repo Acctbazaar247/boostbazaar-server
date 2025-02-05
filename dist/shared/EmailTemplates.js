@@ -640,6 +640,8 @@ const EmailTemplates = {
                 <div class="social-icons">
                     <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
                     <span><a href="https://t.me/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://x.com/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
+                    <span><a href="https://www.tiktok.com/@acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
                 </div>
                 <p class="end">Copyright &copy; 2024 Acctpanel.</p>
             </div>
@@ -1116,8 +1118,10 @@ const EmailTemplates = {
                 </p>
                 <hr>
                 <div class="social-icons">
-                    <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                 <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
                     <span><a href="https://t.me/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://x.com/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
+                    <span><a href="https://www.tiktok.com/@acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
                 </div>
                 <p class="end">Copyright &copy; 2024 Acctpanel.</p>
             </div>
@@ -1260,10 +1264,10 @@ const EmailTemplates = {
                 </p>
                 <hr>
                 <div class="social-icons">
-                    <span><a href="https://www.instagram.com/acctbazaar/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
-                    <span><a href="https://twitter.com/AcctBazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
-                    <span><a href="https://www.tiktok.com/@acctbazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
-                    <span><a href="https://t.me/acctbazaarchannel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                     <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="https://t.me/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://x.com/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
+                    <span><a href="https://www.tiktok.com/@acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
                 </div>
                 <p class="end">Copyright &copy; 2025 Acctpanel Ltd.</p>
             </div>
@@ -1406,10 +1410,10 @@ const EmailTemplates = {
                 </p>
                 <hr>
                 <div class="social-icons">
-                    <span><a href="https://www.instagram.com/acctbazaar/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
-                    <span><a href="https://twitter.com/AcctBazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
-                    <span><a href="https://www.tiktok.com/@acctbazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
-                    <span><a href="https://t.me/acctbazaarchannel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                     <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="https://t.me/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://x.com/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
+                    <span><a href="https://www.tiktok.com/@acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
                 </div>
                 <p class="end">Copyright &copy; 2025 Acctpanel Ltd.</p>
             </div>
@@ -1551,10 +1555,10 @@ const EmailTemplates = {
                 </p>
                 <hr>
                 <div class="social-icons">
-                    <span><a href="https://www.instagram.com/acctbazaar/"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
-                    <span><a href="https://twitter.com/AcctBazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
-                    <span><a href="https://www.tiktok.com/@acctbazaar"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
-                    <span><a href="https://t.me/acctbazaarchannel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://www.instagram.com/acctpanelcom"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720542/zwecb4fjxxzxfudqmmmt.png" alt=""></a></span>
+                    <span><a href="https://t.me/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720920/yrrzkbbjjddmm34hotp4.png" alt=""></a></span>
+                    <span><a href="https://x.com/acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1722720231/pubaatf2xdnmyglvskuo.png" alt=""></a></span>
+                    <span><a href="https://www.tiktok.com/@acctpanel"><img src="https://res.cloudinary.com/dfyeocma8/image/upload/v1730188449/f9nohvfpcwg9l5ekyrii.png" alt=""></a></span>
                 </div>
                 <p class="end">Copyright &copy; 2025 Acctpanel Ltd.</p>
             </div>
