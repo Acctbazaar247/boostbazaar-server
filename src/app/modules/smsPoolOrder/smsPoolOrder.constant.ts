@@ -1,2 +1,7 @@
 export const smsPoolOrderSearchableFields = [];
-export const smsPoolOrderFilterAbleFields = ['id', 'orderId', 'status'];
+export const smsPoolOrderFilterAbleFields = [
+  'id',
+  'orderId',
+  'status',
+  'orderById',
+];
