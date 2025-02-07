@@ -102,8 +102,9 @@ const createSmsPoolOrder = async (
       // make order in sms pool api
       const smsConst = parseFloat(orderResponse.cost);
       const orderServiceCharge =
-        smsConst * (config.smsPoolServiceChargeInPercentage / 100);
-      const lastCost = smsConst + orderServiceCharge;
+        config.smsPoolServiceChargeInPercentage * (smsConst / 100);
+
+      const lastCost = parseFloat((smsConst + orderServiceCharge).toFixed(3));
 
       const smsPoolOrder = await tx.smsPoolOrder.create({
         data: {

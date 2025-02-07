@@ -129,7 +129,6 @@ const refundOrder = async ({ orderId }: { orderId: string }) => {
   const data = new FormData();
   data.append('key', config.smsPoolApiKey);
   data.append('orderid', orderId);
-  console.log('provided order id', orderId);
   const smsPoolCancelConfig = {
     method: 'post',
     maxBodyLength: Infinity,

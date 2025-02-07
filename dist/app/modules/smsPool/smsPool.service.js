@@ -98,8 +98,8 @@ const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, functi
         const newSmsPoolOrder = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
             // make order in sms pool api
             const smsConst = parseFloat(orderResponse.cost);
-            const orderServiceCharge = smsConst * (config_1.default.smsPoolServiceChargeInPercentage / 100);
-            const lastCost = smsConst + orderServiceCharge;
+            const orderServiceCharge = config_1.default.smsPoolServiceChargeInPercentage * (smsConst / 100);
+            const lastCost = parseFloat((smsConst + orderServiceCharge).toFixed(3));
             const smsPoolOrder = yield tx.smsPoolOrder.create({
                 data: Object.assign(Object.assign({}, payload), { cost: lastCost, country: orderResponse.country, pool: orderResponse.pool.toString(), cc: orderResponse.cc, service: orderResponse.service, orderId: orderResponse.order_id, number: orderResponse.number.toString(), phoneNumber: orderResponse.phonenumber }),
             });

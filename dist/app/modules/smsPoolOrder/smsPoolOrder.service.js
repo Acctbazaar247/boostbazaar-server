@@ -99,7 +99,6 @@ const getSingleSmsPoolOrder = (id) => __awaiter(void 0, void 0, void 0, function
     const getOrderHistory = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory({
         orderId: result.orderId,
     });
-    console.log({ getOrderHistory });
     if (!getOrderHistory.length) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Data not found with orderId');
     }
