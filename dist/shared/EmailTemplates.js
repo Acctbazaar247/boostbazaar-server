@@ -1280,7 +1280,7 @@ const EmailTemplates = {
         },
     },
     newManualCurrencyRequest: {
-        subject: 'New manual currency request',
+        subject: 'New manual currency request on Acctpanel',
         html: (data) => {
             return `
       <head>
@@ -1400,7 +1400,7 @@ const EmailTemplates = {
             <h2 class="title">New Manual Deposit</h2>
             <p>
                 Hi there, <br>
-                A new user ${data.email} has just made manual deposit to acctbazaar.
+                A new user ${data.email} has just made manual deposit to Acctpanel.
             </p>
             <div class="email-box-content">
                 <a href="#" class="btn">View</a>

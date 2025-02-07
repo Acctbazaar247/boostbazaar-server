@@ -164,7 +164,7 @@ const updateSmsPoolOrder = (id, payload, userId) => __awaiter(void 0, void 0, vo
             // refund the money to user
             const refundMoney = yield tx.currency.update({
                 where: { ownById: smsPoolOrder.orderById },
-                data: { amount: { decrement: Number(getThatHistory[0].cost) } },
+                data: { amount: { increment: Number(getThatHistory[0].cost) } },
             });
             return yield tx.smsPoolOrder.update({
                 where: { id },

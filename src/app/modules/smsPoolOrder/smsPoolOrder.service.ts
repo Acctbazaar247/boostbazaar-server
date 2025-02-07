@@ -186,7 +186,7 @@ const updateSmsPoolOrder = async (
       // refund the money to user
       const refundMoney = await tx.currency.update({
         where: { ownById: smsPoolOrder.orderById },
-        data: { amount: { decrement: Number(getThatHistory[0].cost) } },
+        data: { amount: { increment: Number(getThatHistory[0].cost) } },
       });
 
       return await tx.smsPoolOrder.update({
