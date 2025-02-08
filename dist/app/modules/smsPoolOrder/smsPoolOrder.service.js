@@ -72,6 +72,16 @@ const getAllSmsPoolOrder = (filters, paginationOptions) => __awaiter(void 0, voi
             : {
                 createdAt: 'desc',
             },
+        include: {
+            orderBy: {
+                select: {
+                    email: true,
+                    name: true,
+                    id: true,
+                    profileImg: true,
+                },
+            },
+        },
     });
     const total = yield prisma_1.default.smsPoolOrder.count({ where: whereConditions });
     const output = {

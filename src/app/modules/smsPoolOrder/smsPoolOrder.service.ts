@@ -69,6 +69,16 @@ const getAllSmsPoolOrder = async (
         : {
             createdAt: 'desc',
           },
+    include: {
+      orderBy: {
+        select: {
+          email: true,
+          name: true,
+          id: true,
+          profileImg: true,
+        },
+      },
+    },
   });
   const total = await prisma.smsPoolOrder.count({ where: whereConditions });
   const output = {
