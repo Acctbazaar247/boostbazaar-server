@@ -31,8 +31,8 @@ emailEvents.on('send-manual-currency-request-email-to-admin', (email, amount) =>
         to: email,
         multi: [
             'brighteghove@gmail.com',
-            'ezeokechinwendu@gmail.com',
-            'ogbonnajanechinyere@gmail.com',
+            // 'ezeokechinwendu@gmail.com',
+            // 'ogbonnajanechinyere@gmail.com',
             //   'naimurrhman53@gmail.com',
         ],
     }, {
