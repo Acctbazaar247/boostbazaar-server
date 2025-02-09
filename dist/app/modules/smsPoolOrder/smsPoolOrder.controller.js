@@ -47,7 +47,8 @@ const getAllSmsPoolOrder = (0, catchAsync_1.default)((req, res) => __awaiter(voi
 }));
 const getSingleSmsPoolOrder = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
-    const result = yield smsPoolOrder_service_1.SmsPoolOrderService.getSingleSmsPoolOrder(id);
+    const user = req.user;
+    const result = yield smsPoolOrder_service_1.SmsPoolOrderService.getSingleSmsPoolOrder(id, user.userId);
     (0, sendResponse_1.default)(res, {
         statusCode: http_status_1.default.OK,
         success: true,

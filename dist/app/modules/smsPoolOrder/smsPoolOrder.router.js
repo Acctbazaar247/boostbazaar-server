@@ -11,8 +11,8 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const smsPoolOrder_controller_1 = require("./smsPoolOrder.controller");
 const smsPoolOrder_validation_1 = require("./smsPoolOrder.validation");
 const router = express_1.default.Router();
-router.get('/', smsPoolOrder_controller_1.SmsPoolOrderController.getAllSmsPoolOrder);
-router.get('/:id', smsPoolOrder_controller_1.SmsPoolOrderController.getSingleSmsPoolOrder);
+router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), smsPoolOrder_controller_1.SmsPoolOrderController.getAllSmsPoolOrder);
+router.get('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), smsPoolOrder_controller_1.SmsPoolOrderController.getSingleSmsPoolOrder);
 // router.post(
 //   '/',
 //   validateRequest(SmsPoolOrderValidation.createValidation),

@@ -99,7 +99,10 @@ const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, functi
             // make order in sms pool api
             const smsConst = parseFloat(orderResponse.cost);
             const orderServiceCharge = config_1.default.smsPoolServiceChargeInPercentage * (smsConst / 100);
+            console.log('Main cost in sms poool', smsConst);
+            console.log('main service charge ', orderServiceCharge);
             const lastCost = parseFloat((smsConst + orderServiceCharge).toFixed(3));
+            console.log('Main cost in our system', lastCost);
             const smsPoolOrder = yield tx.smsPoolOrder.create({
                 data: Object.assign(Object.assign({}, payload), { cost: lastCost, country: orderResponse.country, pool: orderResponse.pool.toString(), cc: orderResponse.cc, service: orderResponse.service, orderId: orderResponse.order_id, number: orderResponse.number.toString(), phoneNumber: orderResponse.phonenumber }),
             });

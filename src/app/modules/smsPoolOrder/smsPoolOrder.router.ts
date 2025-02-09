@@ -6,8 +6,16 @@ import { SmsPoolOrderController } from './smsPoolOrder.controller';
 import { SmsPoolOrderValidation } from './smsPoolOrder.validation';
 const router = express.Router();
 
-router.get('/', SmsPoolOrderController.getAllSmsPoolOrder);
-router.get('/:id', SmsPoolOrderController.getSingleSmsPoolOrder);
+router.get(
+  '/',
+  auth(UserRole.admin, UserRole.user),
+  SmsPoolOrderController.getAllSmsPoolOrder
+);
+router.get(
+  '/:id',
+  auth(UserRole.admin, UserRole.user),
+  SmsPoolOrderController.getSingleSmsPoolOrder
+);
 
 // router.post(
 //   '/',

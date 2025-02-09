@@ -88,41 +88,6 @@ const getAllSmsPoolOrder = async (
   return output;
 };
 
-const createSmsPoolOrder = async (
-  payload: SmsPoolOrder
-): Promise<SmsPoolOrder | null> => {
-  const newSmsPoolOrder = await prisma.smsPoolOrder.create({
-    data: payload,
-  });
-  return newSmsPoolOrder;
-};
-
-const getSingleSmsPoolOrder = async (
-  id: string
-): Promise<ISmsPoolOrderDetails | null> => {
-  const result = await prisma.smsPoolOrder.findUnique({
-    where: {
-      id,
-    },
-  });
-  if (!result) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Not Found');
-  }
-  // get details form smsPool
-  const getOrderHistory = await smsPoolRequest.getAllOrderHistory({
-    orderId: result.orderId,
-  });
-  if (!getOrderHistory.length) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Data not found with orderId');
-  }
-  const mainResult = {
-    info: result,
-    details: getOrderHistory[0],
-  };
-
-  return mainResult;
-};
-
 const updateSmsPoolOrder = async (
   id: string,
   payload: Partial<SmsPoolOrder>,
@@ -214,6 +179,75 @@ const updateSmsPoolOrder = async (
     data: payload,
   });
   return result;
+};
+
+const createSmsPoolOrder = async (
+  payload: SmsPoolOrder
+): Promise<SmsPoolOrder | null> => {
+  const newSmsPoolOrder = await prisma.smsPoolOrder.create({
+    data: payload,
+  });
+  return newSmsPoolOrder;
+};
+
+const getSingleSmsPoolOrder = async (
+  id: string,
+  userId: string
+): Promise<ISmsPoolOrderDetails | null> => {
+  let result = await prisma.smsPoolOrder.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!result) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Not Found');
+  }
+  // get details form smsPool
+  const getOrderHistory = await smsPoolRequest.getAllOrderHistory({
+    orderId: result.orderId,
+  });
+  if (!getOrderHistory.length) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Data not found with orderId');
+  }
+  const smsPoolOrder = getOrderHistory[0];
+  // handle sync
+
+  if (
+    result.status === ESmsPoolOrderStatus.pending &&
+    smsPoolOrder.status === ESmsPoolOrderStatus.completed
+  ) {
+    // update the status of the order
+    const updatedOrder = await prisma.smsPoolOrder.update({
+      where: { id: result.id },
+      data: { status: ESmsPoolOrderStatus.completed },
+    });
+    if (updatedOrder?.id) {
+      console.log('sync to completed');
+      result = updatedOrder;
+    }
+  } else if (
+    result.status === ESmsPoolOrderStatus.pending &&
+    smsPoolOrder.status === ESmsPoolOrderStatus.refunded
+  ) {
+    const updateData = await updateSmsPoolOrder(
+      id,
+      {
+        status: ESmsPoolOrderStatus.refunded,
+      },
+      userId
+    );
+    if (updateData?.id) {
+      console.log('sync to refunded');
+      result = updateData;
+    }
+  }
+  // update the status of the order
+  const mainResult = {
+    info: result,
+    details: getOrderHistory[0],
+  };
+
+  return mainResult;
 };
 
 const updateSmsPoolOrderStatus = async (

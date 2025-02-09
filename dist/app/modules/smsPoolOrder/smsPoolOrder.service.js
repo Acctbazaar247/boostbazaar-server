@@ -90,34 +90,6 @@ const getAllSmsPoolOrder = (filters, paginationOptions) => __awaiter(void 0, voi
     };
     return output;
 });
-const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, function* () {
-    const newSmsPoolOrder = yield prisma_1.default.smsPoolOrder.create({
-        data: payload,
-    });
-    return newSmsPoolOrder;
-});
-const getSingleSmsPoolOrder = (id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield prisma_1.default.smsPoolOrder.findUnique({
-        where: {
-            id,
-        },
-    });
-    if (!result) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Not Found');
-    }
-    // get details form smsPool
-    const getOrderHistory = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory({
-        orderId: result.orderId,
-    });
-    if (!getOrderHistory.length) {
-        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Data not found with orderId');
-    }
-    const mainResult = {
-        info: result,
-        details: getOrderHistory[0],
-    };
-    return mainResult;
-});
 const updateSmsPoolOrder = (id, payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma_1.default.user.findUnique({
         where: {
@@ -190,6 +162,59 @@ const updateSmsPoolOrder = (id, payload, userId) => __awaiter(void 0, void 0, vo
         data: payload,
     });
     return result;
+});
+const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, function* () {
+    const newSmsPoolOrder = yield prisma_1.default.smsPoolOrder.create({
+        data: payload,
+    });
+    return newSmsPoolOrder;
+});
+const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    let result = yield prisma_1.default.smsPoolOrder.findUnique({
+        where: {
+            id,
+        },
+    });
+    if (!result) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Not Found');
+    }
+    // get details form smsPool
+    const getOrderHistory = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory({
+        orderId: result.orderId,
+    });
+    if (!getOrderHistory.length) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Data not found with orderId');
+    }
+    const smsPoolOrder = getOrderHistory[0];
+    // handle sync
+    if (result.status === client_1.ESmsPoolOrderStatus.pending &&
+        smsPoolOrder.status === client_1.ESmsPoolOrderStatus.completed) {
+        // update the status of the order
+        const updatedOrder = yield prisma_1.default.smsPoolOrder.update({
+            where: { id: result.id },
+            data: { status: client_1.ESmsPoolOrderStatus.completed },
+        });
+        if (updatedOrder === null || updatedOrder === void 0 ? void 0 : updatedOrder.id) {
+            console.log('sync to completed');
+            result = updatedOrder;
+        }
+    }
+    else if (result.status === client_1.ESmsPoolOrderStatus.pending &&
+        smsPoolOrder.status === client_1.ESmsPoolOrderStatus.refunded) {
+        const updateData = yield updateSmsPoolOrder(id, {
+            status: client_1.ESmsPoolOrderStatus.refunded,
+        }, userId);
+        if (updateData === null || updateData === void 0 ? void 0 : updateData.id) {
+            console.log('sync to refunded');
+            result = updateData;
+        }
+    }
+    // update the status of the order
+    const mainResult = {
+        info: result,
+        details: getOrderHistory[0],
+    };
+    return mainResult;
 });
 const updateSmsPoolOrderStatus = (id, payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield prisma_1.default.user.findUnique({

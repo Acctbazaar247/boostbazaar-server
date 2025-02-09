@@ -50,8 +50,11 @@ const getAllSmsPoolOrder = catchAsync(async (req: Request, res: Response) => {
 const getSingleSmsPoolOrder: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const id = req.params.id;
-
-    const result = await SmsPoolOrderService.getSingleSmsPoolOrder(id);
+    const user = req.user as JwtPayload;
+    const result = await SmsPoolOrderService.getSingleSmsPoolOrder(
+      id,
+      user.userId
+    );
     sendResponse<ISmsPoolOrderDetails>(res, {
       statusCode: httpStatus.OK,
       success: true,
