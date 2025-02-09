@@ -8,12 +8,22 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   SmsPoolOrderController.getAllSmsPoolOrder
 );
 router.get(
   '/:id',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   SmsPoolOrderController.getSingleSmsPoolOrder
 );
 
@@ -25,19 +35,24 @@ router.get(
 
 router.patch(
   '/update-status/:id',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.customerCare, UserRole.financeAdmin),
   validateRequest(SmsPoolOrderValidation.updateValidation),
   SmsPoolOrderController.updateSmsPoolOrderStatus
 );
 router.patch(
   '/:id',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(SmsPoolOrderValidation.updateValidation),
   SmsPoolOrderController.updateSmsPoolOrder
 );
 router.delete(
   '/:id',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.customerCare, UserRole.financeAdmin),
   SmsPoolOrderController.deleteSmsPoolOrder
 );
 

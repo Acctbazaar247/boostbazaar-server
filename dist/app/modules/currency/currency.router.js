@@ -11,10 +11,10 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const currency_controller_1 = require("./currency.controller");
 const currency_validation_1 = require("./currency.validation");
 const router = express_1.default.Router();
-router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), currency_controller_1.CurrencyController.getAllCurrency);
-router.get('/single-user-currency', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), currency_controller_1.CurrencyController.getSingleCurrencyByUserId);
+router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), currency_controller_1.CurrencyController.getAllCurrency);
+router.get('/single-user-currency', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), currency_controller_1.CurrencyController.getSingleCurrencyByUserId);
 // router.get('/:id', CurrencyController.getSingleCurrency);
 router.post('/', (0, validateRequest_1.default)(currency_validation_1.CurrencyValidation.createValidation), currency_controller_1.CurrencyController.createCurrency);
-router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin), (0, validateRequest_1.default)(currency_validation_1.CurrencyValidation.updateValidation), currency_controller_1.CurrencyController.updateCurrency);
+router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.financeAdmin), (0, validateRequest_1.default)(currency_validation_1.CurrencyValidation.updateValidation), currency_controller_1.CurrencyController.updateCurrency);
 // router.delete('/:id', CurrencyController.deleteCurrency);
 exports.CurrencyRoutes = router;

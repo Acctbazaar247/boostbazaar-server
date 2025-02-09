@@ -8,14 +8,24 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   ReferralController.getAllReferral
 );
 router.get('/:id', ReferralController.getSingleReferral);
 
 router.post(
   '/send-invitation',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(ReferralValidation.invitation),
   ReferralController.sendReferralEmail
 );

@@ -24,12 +24,22 @@ router.post(
 router.post(
   '/verify-signup-token',
   validateRequest(AuthValidation.verifyToken),
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.customerCare,
+    UserRole.financeAdmin,
+    UserRole.user
+  ),
   AuthController.verifySignupToken
 );
 router.post(
   '/resend/:email',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   AuthController.resendEmail
 );
 router.post('/send-forgot-email/:email', AuthController.sendForgotEmail);

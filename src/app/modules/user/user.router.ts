@@ -14,7 +14,7 @@ router.get(
 );
 router.get(
   '/admin/overview',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin, UserRole.customerCare),
   UserController.adminOverview
 );
 // router.get(
@@ -45,13 +45,23 @@ router.post(
 );
 router.get(
   '/:id',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   UserController.getSingleUser
 );
 
 router.patch(
   '/:id',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(UserValidation.updateValidation),
   UserController.updateUser
 );

@@ -11,20 +11,20 @@ router.get('/:id', CryptoBankController.getSingleCryptoBank);
 
 router.post(
   '/',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin),
   validateRequest(CryptoBankValidation.createValidation),
   CryptoBankController.createCryptoBank
 );
 
 router.patch(
   '/:id',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin),
   validateRequest(CryptoBankValidation.updateValidation),
   CryptoBankController.updateCryptoBank
 );
 router.delete(
   '/:id',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin),
   CryptoBankController.deleteCryptoBank
 );
 

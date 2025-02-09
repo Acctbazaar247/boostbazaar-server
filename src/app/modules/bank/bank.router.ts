@@ -11,7 +11,7 @@ router.get('/:id', BankController.getSingleBank);
 
 router.post(
   '/',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin),
   validateRequest(BankValidation.createValidation),
   BankController.createBank
 );
@@ -19,9 +19,13 @@ router.post(
 router.patch(
   '/:id',
   validateRequest(BankValidation.updateValidation),
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.financeAdmin),
   BankController.updateBank
 );
-router.delete('/:id', auth(UserRole.admin), BankController.deleteBank);
+router.delete(
+  '/:id',
+  auth(UserRole.admin, UserRole.financeAdmin),
+  BankController.deleteBank
+);
 
 export const BankRoutes = router;

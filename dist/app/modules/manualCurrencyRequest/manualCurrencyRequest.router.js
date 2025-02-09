@@ -11,9 +11,9 @@ const validateRequest_1 = __importDefault(require("../../middlewares/validateReq
 const manualCurrencyRequest_controller_1 = require("./manualCurrencyRequest.controller");
 const manualCurrencyRequest_validation_1 = require("./manualCurrencyRequest.validation");
 const router = express_1.default.Router();
-router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.getAllManualCurrencyRequest);
-router.get('/:id', (0, auth_1.default)(client_1.UserRole.admin), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.getSingleManualCurrencyRequest);
+router.get('/', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.getAllManualCurrencyRequest);
+router.get('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.user, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.getSingleManualCurrencyRequest);
 router.post('/', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(manualCurrencyRequest_validation_1.ManualCurrencyRequestValidation.createValidation), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.createManualCurrencyRequest);
-router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin), (0, validateRequest_1.default)(manualCurrencyRequest_validation_1.ManualCurrencyRequestValidation.updateValidation), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.updateManualCurrencyRequest);
-router.delete('/:id', (0, auth_1.default)(client_1.UserRole.admin), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.deleteManualCurrencyRequest);
+router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), (0, validateRequest_1.default)(manualCurrencyRequest_validation_1.ManualCurrencyRequestValidation.updateValidation), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.updateManualCurrencyRequest);
+router.delete('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.financeAdmin, client_1.UserRole.customerCare), manualCurrencyRequest_controller_1.ManualCurrencyRequestController.deleteManualCurrencyRequest);
 exports.ManualCurrencyRequestRoutes = router;

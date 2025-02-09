@@ -6,22 +6,59 @@ import { TicketsController } from './tickets.controller';
 import { TicketsValidation } from './tickets.validation';
 const router = express.Router();
 
-router.get('/', auth(UserRole.admin), TicketsController.getAllTickets);
-router.get('/:id', auth(UserRole.admin), TicketsController.getSingleTickets);
+router.get(
+  '/',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  TicketsController.getAllTickets
+);
+router.get(
+  '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  TicketsController.getSingleTickets
+);
 
 router.post(
   '/',
-  auth(UserRole.user, UserRole.admin),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(TicketsValidation.createValidation),
   TicketsController.createTickets
 );
 
 router.patch(
   '/:id',
-  auth(UserRole.admin),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(TicketsValidation.updateValidation),
   TicketsController.updateTickets
 );
-router.delete('/:id', auth(UserRole.admin), TicketsController.deleteTickets);
+router.delete(
+  '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  TicketsController.deleteTickets
+);
 
 export const TicketsRoutes = router;

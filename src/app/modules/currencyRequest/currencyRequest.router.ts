@@ -8,12 +8,22 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   CurrencyRequestController.getAllCurrencyRequest
 );
 router.get(
   '/:id',
-  auth(UserRole.admin, UserRole.user),
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   CurrencyRequestController.getSingleCurrencyRequest
 );
 
@@ -54,13 +64,13 @@ router.post(
 
 router.patch(
   '/:id',
-  auth(UserRole.admin),
+  auth(UserRole.admin, UserRole.customerCare, UserRole.financeAdmin),
   validateRequest(CurrencyRequestValidation.updateValidation),
   CurrencyRequestController.updateCurrencyRequest
 );
 router.delete(
   '/:id',
-  auth(UserRole.admin, UserRole.admin),
+  auth(UserRole.admin, UserRole.customerCare, UserRole.financeAdmin),
   CurrencyRequestController.deleteCurrencyRequest
 );
 

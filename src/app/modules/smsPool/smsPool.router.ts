@@ -6,10 +6,36 @@ import { SmsPoolController } from './smsPool.controller';
 import { SmsPoolValidation } from './smsPool.validation';
 const router = express.Router();
 
-router.get('/', SmsPoolController.getAllSmsPoolService);
-router.get('/order/history', SmsPoolController.getAllOrderHistoryFromSmsPool);
-router.get('/:id', SmsPoolController.getSingleSmsPool);
-
+router.get(
+  '/',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  SmsPoolController.getAllSmsPoolService
+);
+router.get(
+  '/order/history',
+  auth(
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin,
+    UserRole.admin
+  ),
+  SmsPoolController.getAllOrderHistoryFromSmsPool
+);
+router.get(
+  '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  SmsPoolController.getSingleSmsPool
+);
 // router.post(
 //   '/',
 //   validateRequest(SmsPoolValidation.createValidation),

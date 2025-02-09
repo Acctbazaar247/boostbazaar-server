@@ -6,8 +6,26 @@ import { OrdersController } from './orders.controller';
 import { OrdersValidation } from './orders.validation';
 const router = express.Router();
 
-router.get('/', OrdersController.getAllOrders);
-router.get('/:id', OrdersController.getSingleOrders);
+router.get(
+  '/',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  OrdersController.getAllOrders
+);
+router.get(
+  '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  OrdersController.getSingleOrders
+);
 
 router.post(
   '/',
@@ -18,9 +36,24 @@ router.post(
 
 router.patch(
   '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
   validateRequest(OrdersValidation.updateValidation),
   OrdersController.updateOrders
 );
-router.delete('/:id', OrdersController.deleteOrders);
+router.delete(
+  '/:id',
+  auth(
+    UserRole.admin,
+    UserRole.user,
+    UserRole.customerCare,
+    UserRole.financeAdmin
+  ),
+  OrdersController.deleteOrders
+);
 
 export const OrdersRoutes = router;
