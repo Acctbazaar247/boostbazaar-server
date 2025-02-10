@@ -206,6 +206,8 @@ const getSingleSmsPoolOrder = async (
   const getOrderHistory = await smsPoolRequest.getAllOrderHistory({
     orderId: result.orderId,
   });
+  console.log(getOrderHistory, 'heelo dfsdfas fdf ');
+  console.log(result);
   if (!getOrderHistory.length) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Data not found with orderId');
   }
@@ -229,13 +231,24 @@ const getSingleSmsPoolOrder = async (
     result.status === ESmsPoolOrderStatus.pending &&
     smsPoolOrder.status === ESmsPoolOrderStatus.refunded
   ) {
-    const updateData = await updateSmsPoolOrder(
-      id,
-      {
-        status: ESmsPoolOrderStatus.refunded,
-      },
-      userId
-    );
+    const updateData = await prisma.$transaction(async tx => {
+      const updateOrder = await tx.smsPoolOrder.update({
+        where: { id },
+        data: { status: ESmsPoolOrderStatus.refunded },
+      });
+      if (!result?.id) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+      }
+      // also add back the mon
+      const addBackMoney = await tx.currency.update({
+        where: { ownById: result.orderById },
+        data: { amount: { increment: Number(smsPoolOrder.cost) } },
+      });
+      if (!addBackMoney?.id) {
+        throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
+      }
+      return updateOrder;
+    });
     if (updateData?.id) {
       console.log('sync to refunded');
       result = updateData;

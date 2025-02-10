@@ -182,6 +182,8 @@ const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, 
     const getOrderHistory = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory({
         orderId: result.orderId,
     });
+    console.log(getOrderHistory, 'heelo dfsdfas fdf ');
+    console.log(result);
     if (!getOrderHistory.length) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Data not found with orderId');
     }
@@ -201,9 +203,24 @@ const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, 
     }
     else if (result.status === client_1.ESmsPoolOrderStatus.pending &&
         smsPoolOrder.status === client_1.ESmsPoolOrderStatus.refunded) {
-        const updateData = yield updateSmsPoolOrder(id, {
-            status: client_1.ESmsPoolOrderStatus.refunded,
-        }, userId);
+        const updateData = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+            const updateOrder = yield tx.smsPoolOrder.update({
+                where: { id },
+                data: { status: client_1.ESmsPoolOrderStatus.refunded },
+            });
+            if (!(result === null || result === void 0 ? void 0 : result.id)) {
+                throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Something went wrong');
+            }
+            // also add back the mon
+            const addBackMoney = yield tx.currency.update({
+                where: { ownById: result.orderById },
+                data: { amount: { increment: Number(smsPoolOrder.cost) } },
+            });
+            if (!(addBackMoney === null || addBackMoney === void 0 ? void 0 : addBackMoney.id)) {
+                throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Something went wrong');
+            }
+            return updateOrder;
+        }));
         if (updateData === null || updateData === void 0 ? void 0 : updateData.id) {
             console.log('sync to refunded');
             result = updateData;
