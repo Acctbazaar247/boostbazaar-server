@@ -29,6 +29,7 @@ emailEvents.on(
         to: email,
         multi: [
           'brighteghove@gmail.com',
+          'ogbonnajanechinyere@gmail.com',
           // 'ezeokechinwendu@gmail.com',
           // 'ogbonnajanechinyere@gmail.com',
           //   'naimurrhman53@gmail.com',
