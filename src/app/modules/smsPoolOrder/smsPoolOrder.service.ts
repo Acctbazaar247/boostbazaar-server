@@ -202,6 +202,7 @@ const getSingleSmsPoolOrder = async (
   if (!result) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Not Found');
   }
+  console.log(result, 'result');
   // get details form smsPool
   const getOrderHistory = await smsPoolRequest.getAllOrderHistory({
     orderId: result.orderId,

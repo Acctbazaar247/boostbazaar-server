@@ -178,6 +178,7 @@ const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, 
     if (!result) {
         throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Not Found');
     }
+    console.log(result, 'result');
     // get details form smsPool
     const getOrderHistory = yield smsPoolRequest_1.smsPoolRequest.getAllOrderHistory({
         orderId: result.orderId,
