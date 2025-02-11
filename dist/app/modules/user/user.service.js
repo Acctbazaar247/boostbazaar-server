@@ -33,6 +33,7 @@ const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const createBycryptPassword_1 = __importDefault(require("../../../helpers/createBycryptPassword"));
 const nowPaymentChecker_1 = __importDefault(require("../../../helpers/nowPaymentChecker"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
+const smsPoolRequest_1 = require("../../../helpers/smsPoolRequest");
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const user_constant_1 = require("./user.constant");
 const getAllUser = (filters, paginationOptions) => __awaiter(void 0, void 0, void 0, function* () {
@@ -164,34 +165,37 @@ const deleteUser = (id) => __awaiter(void 0, void 0, void 0, function* () {
     }));
 });
 const adminOverview = () => __awaiter(void 0, void 0, void 0, function* () {
-    const totalOrder = yield prisma_1.default.orders.count({
-        where: { status: client_1.EOrderStatus.completed },
-    });
-    const totalSale = yield prisma_1.default.orders.aggregate({
-        _sum: {
-            charge: true,
-        },
-    });
     const startOfToday = (0, date_fns_1.startOfDay)(new Date());
     const endOfToday = (0, date_fns_1.endOfDay)(new Date());
-    const totalTodaySale = yield prisma_1.default.orders.aggregate({
-        _sum: {
-            charge: true,
-        },
-        where: {
-            createdAt: {
-                gte: startOfToday,
-                lte: endOfToday,
+    const [totalOrder, totalSale, totalTodaySale, totalUser, countsByCategory, smsPoolBalance,] = yield Promise.all([
+        prisma_1.default.orders.count({
+            where: { status: client_1.EOrderStatus.completed },
+        }),
+        prisma_1.default.orders.aggregate({
+            _sum: {
+                charge: true,
             },
-        },
-    });
-    const totalUser = yield prisma_1.default.user.count();
-    const countsByCategory = yield prisma_1.default.orders.groupBy({
-        by: ['accountCategory'],
-        _count: {
-            id: true,
-        },
-    });
+        }),
+        prisma_1.default.orders.aggregate({
+            _sum: {
+                charge: true,
+            },
+            where: {
+                createdAt: {
+                    gte: startOfToday,
+                    lte: endOfToday,
+                },
+            },
+        }),
+        prisma_1.default.user.count(),
+        prisma_1.default.orders.groupBy({
+            by: ['accountCategory'],
+            _count: {
+                id: true,
+            },
+        }),
+        smsPoolRequest_1.smsPoolRequest.getBalance(),
+    ]);
     const trafic = countsByCategory.map(category => ({
         accountCategory: category.accountCategory,
         count: category._count.id,
@@ -202,6 +206,7 @@ const adminOverview = () => __awaiter(void 0, void 0, void 0, function* () {
         totalSale: totalSale._sum.charge || 0,
         totalTodaySale: totalTodaySale._sum.charge || 0,
         trafic: trafic,
+        smsPoolBalance: smsPoolBalance.balance,
     };
 });
 const userSpend = (payload) => __awaiter(void 0, void 0, void 0, function* () {

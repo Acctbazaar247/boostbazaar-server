@@ -25,6 +25,7 @@ export type TAdminOverview = {
   totalSale: number;
   totalTodaySale: number;
   trafic: TTrafic[];
+  smsPoolBalance: string;
 };
 export type TSellerOverview = {
   totalAccountApprove: number;

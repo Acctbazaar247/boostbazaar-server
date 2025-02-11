@@ -83,10 +83,24 @@ const refundOrder = ({ orderId }) => __awaiter(void 0, void 0, void 0, function*
     const response = yield (0, axios_1.default)(smsPoolCancelConfig);
     return response.data;
 });
+const getBalance = () => __awaiter(void 0, void 0, void 0, function* () {
+    const data = new form_data_1.default();
+    data.append('key', config_1.default.smsPoolApiKey);
+    const smsPoolBalanceConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://api.smspool.net/request/balance',
+        headers: Object.assign({}, data.getHeaders()),
+        data: data,
+    };
+    const response = yield (0, axios_1.default)(smsPoolBalanceConfig);
+    return response.data;
+});
 exports.smsPoolRequest = {
     makeOrderRequest,
     getOrderStatus,
     allService,
     getAllOrderHistory,
     refundOrder,
+    getBalance,
 };

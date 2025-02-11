@@ -8,6 +8,7 @@ import ApiError from '../../../errors/ApiError';
 import createBycryptPassword from '../../../helpers/createBycryptPassword';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { smsPoolRequest } from '../../../helpers/smsPoolRequest';
 import { IGenericResponse, TAdminOverview } from '../../../interfaces/common';
 import { IPaginationOptions } from '../../../interfaces/pagination';
 import prisma from '../../../shared/prisma';
@@ -178,36 +179,46 @@ const deleteUser = async (id: string): Promise<User | null> => {
 };
 
 const adminOverview = async (): Promise<TAdminOverview | null> => {
-  const totalOrder = await prisma.orders.count({
-    where: { status: EOrderStatus.completed },
-  });
-  const totalSale = await prisma.orders.aggregate({
-    _sum: {
-      charge: true,
-    },
-  });
   const startOfToday = startOfDay(new Date());
   const endOfToday = endOfDay(new Date());
 
-  const totalTodaySale = await prisma.orders.aggregate({
-    _sum: {
-      charge: true,
-    },
-    where: {
-      createdAt: {
-        gte: startOfToday,
-        lte: endOfToday,
+  const [
+    totalOrder,
+    totalSale,
+    totalTodaySale,
+    totalUser,
+    countsByCategory,
+    smsPoolBalance,
+  ] = await Promise.all([
+    prisma.orders.count({
+      where: { status: EOrderStatus.completed },
+    }),
+    prisma.orders.aggregate({
+      _sum: {
+        charge: true,
       },
-    },
-  });
+    }),
+    prisma.orders.aggregate({
+      _sum: {
+        charge: true,
+      },
+      where: {
+        createdAt: {
+          gte: startOfToday,
+          lte: endOfToday,
+        },
+      },
+    }),
+    prisma.user.count(),
+    prisma.orders.groupBy({
+      by: ['accountCategory'],
+      _count: {
+        id: true,
+      },
+    }),
+    smsPoolRequest.getBalance(),
+  ]);
 
-  const totalUser = await prisma.user.count();
-  const countsByCategory = await prisma.orders.groupBy({
-    by: ['accountCategory'],
-    _count: {
-      id: true,
-    },
-  });
   const trafic = countsByCategory.map(category => ({
     accountCategory: category.accountCategory,
     count: category._count.id,
@@ -218,6 +229,7 @@ const adminOverview = async (): Promise<TAdminOverview | null> => {
     totalSale: totalSale._sum.charge || 0,
     totalTodaySale: totalTodaySale._sum.charge || 0,
     trafic: trafic,
+    smsPoolBalance: smsPoolBalance.balance,
   };
 };
 const userSpend = async (
@@ -230,7 +242,7 @@ const userSpend = async (
     where: {
       orderById: payload, // Replace this with the actual ID you want to filter by
     },
-  }); 
+  });
   return {
     spend: totalCharge._sum.charge || 0,
   };
