@@ -26,6 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SmsPoolOrderService = void 0;
 const client_1 = require("@prisma/client");
 const http_status_1 = __importDefault(require("http-status"));
+const config_1 = __importDefault(require("../../../config"));
 const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const paginationHelper_1 = require("../../../helpers/paginationHelper");
 const smsPoolRequest_1 = require("../../../helpers/smsPoolRequest");
@@ -139,13 +140,18 @@ const updateSmsPoolOrder = (id, payload, userId) => __awaiter(void 0, void 0, vo
             console.log(err);
             throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Failed to Refund order, Please try again');
         }
+        const orderCost = parseFloat(getThatHistory[0].cost);
+        const orderServiceCharge = config_1.default.smsPoolServiceChargeInPercentage * (orderCost / 100);
+        const totalRefundAmount = orderCost + orderServiceCharge;
         // start a transaction
         const transaction = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
             // make a call to smsPoolRequest to refund the order
             // refund the money to user
             const refundMoney = yield tx.currency.update({
                 where: { ownById: smsPoolOrder.orderById },
-                data: { amount: { increment: Number(getThatHistory[0].cost) } },
+                data: {
+                    amount: { increment: parseFloat(totalRefundAmount.toFixed(3)) },
+                },
             });
             return yield tx.smsPoolOrder.update({
                 where: { id },
@@ -170,6 +176,7 @@ const createSmsPoolOrder = (payload) => __awaiter(void 0, void 0, void 0, functi
     return newSmsPoolOrder;
 });
 const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('hi');
     let result = yield prisma_1.default.smsPoolOrder.findUnique({
         where: {
             id,
@@ -190,6 +197,7 @@ const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, 
     }
     const smsPoolOrder = getOrderHistory[0];
     // handle sync
+    console.log('checking status');
     if (result.status === client_1.ESmsPoolOrderStatus.pending &&
         smsPoolOrder.status === client_1.ESmsPoolOrderStatus.completed) {
         // update the status of the order
@@ -213,9 +221,15 @@ const getSingleSmsPoolOrder = (id, userId) => __awaiter(void 0, void 0, void 0, 
                 throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Something went wrong');
             }
             // also add back the mon
+            const orderCost = parseFloat(smsPoolOrder.cost);
+            const serviceCharge = config_1.default.smsPoolServiceChargeInPercentage * (orderCost / 100);
             const addBackMoney = yield tx.currency.update({
                 where: { ownById: result.orderById },
-                data: { amount: { increment: Number(smsPoolOrder.cost) } },
+                data: {
+                    amount: {
+                        increment: parseFloat((orderCost + serviceCharge).toFixed(3)),
+                    },
+                },
             });
             if (!(addBackMoney === null || addBackMoney === void 0 ? void 0 : addBackMoney.id)) {
                 throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Something went wrong');

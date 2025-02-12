@@ -5,6 +5,7 @@ import {
   UserRole,
 } from '@prisma/client';
 import httpStatus from 'http-status';
+import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { smsPoolRequest } from '../../../helpers/smsPoolRequest';
@@ -154,13 +155,19 @@ const updateSmsPoolOrder = async (
         'Failed to Refund order, Please try again'
       );
     }
+    const orderCost = parseFloat(getThatHistory[0].cost);
+    const orderServiceCharge =
+      config.smsPoolServiceChargeInPercentage * (orderCost / 100);
+    const totalRefundAmount = orderCost + orderServiceCharge;
     // start a transaction
     const transaction = await prisma.$transaction(async tx => {
       // make a call to smsPoolRequest to refund the order
       // refund the money to user
       const refundMoney = await tx.currency.update({
         where: { ownById: smsPoolOrder.orderById },
-        data: { amount: { increment: Number(getThatHistory[0].cost) } },
+        data: {
+          amount: { increment: parseFloat(totalRefundAmount.toFixed(3)) },
+        },
       });
 
       return await tx.smsPoolOrder.update({
@@ -194,6 +201,7 @@ const getSingleSmsPoolOrder = async (
   id: string,
   userId: string
 ): Promise<ISmsPoolOrderDetails | null> => {
+  console.log('hi');
   let result = await prisma.smsPoolOrder.findUnique({
     where: {
       id,
@@ -214,7 +222,7 @@ const getSingleSmsPoolOrder = async (
   }
   const smsPoolOrder = getOrderHistory[0];
   // handle sync
-
+  console.log('checking status');
   if (
     result.status === ESmsPoolOrderStatus.pending &&
     smsPoolOrder.status === ESmsPoolOrderStatus.completed
@@ -241,9 +249,16 @@ const getSingleSmsPoolOrder = async (
         throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
       }
       // also add back the mon
+      const orderCost = parseFloat(smsPoolOrder.cost);
+      const serviceCharge =
+        config.smsPoolServiceChargeInPercentage * (orderCost / 100);
       const addBackMoney = await tx.currency.update({
         where: { ownById: result.orderById },
-        data: { amount: { increment: Number(smsPoolOrder.cost) } },
+        data: {
+          amount: {
+            increment: parseFloat((orderCost + serviceCharge).toFixed(3)),
+          },
+        },
       });
       if (!addBackMoney?.id) {
         throw new ApiError(httpStatus.BAD_REQUEST, 'Something went wrong');
