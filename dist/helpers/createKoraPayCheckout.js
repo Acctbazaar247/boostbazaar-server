@@ -44,7 +44,7 @@ const createKoraPayCheckout = (request) => __awaiter(void 0, void 0, void 0, fun
             },
             reference: request.reference,
             //
-            notification_url: `${config_1.default.baseServerUrl}/currency-request/kora-pay-webhook`,
+            notification_url: `${config_1.default.baseServerUrl}/currency-request/webhook/korapay`,
             redirect_url: request.callbackUrl,
             merchant_bears_cost: false,
         }, { headers });

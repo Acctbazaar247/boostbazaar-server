@@ -50,7 +50,7 @@ export const createKoraPayCheckout = async (
         },
         reference: request.reference,
         //
-        notification_url: `${config.baseServerUrl}/currency-request/kora-pay-webhook`,
+        notification_url: `${config.baseServerUrl}/currency-request/webhook/korapay`,
         redirect_url: request.callbackUrl,
         merchant_bears_cost: false,
       },
