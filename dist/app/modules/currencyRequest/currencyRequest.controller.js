@@ -13,11 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CurrencyRequestController = void 0;
+const crypto_1 = __importDefault(require("crypto"));
 const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const pagination_1 = require("../../../constants/pagination");
+const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const flutterwavePaymentChecker_1 = __importDefault(require("../../../helpers/flutterwavePaymentChecker"));
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
+const common_1 = require("../../../interfaces/common");
 const EmailTemplates_1 = __importDefault(require("../../../shared/EmailTemplates"));
 const catchAsync_1 = __importDefault(require("../../../shared/catchAsync"));
 const catchAsyncSemaphore_1 = __importDefault(require("../../../shared/catchAsyncSemaphore"));
@@ -25,6 +28,7 @@ const pick_1 = __importDefault(require("../../../shared/pick"));
 const prisma_1 = __importDefault(require("../../../shared/prisma"));
 const sendResponse_1 = __importDefault(require("../../../shared/sendResponse"));
 const currencyRequest_constant_1 = require("./currencyRequest.constant");
+const currencyRequest_interface_1 = require("./currencyRequest.interface");
 const currencyRequest_service_1 = require("./currencyRequest.service");
 const createCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const CurrencyRequestData = req.body;
@@ -129,6 +133,17 @@ const payStackWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0
         data: 'success',
     });
 }));
+const createCurrencyRequestWithKoraPay = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const CurrencyRequestData = req.body;
+    const user = req.user;
+    const result = yield currencyRequest_service_1.CurrencyRequestService.createCurrencyRequestWithKoraPay(Object.assign(Object.assign({}, CurrencyRequestData), { ownById: user.userId }));
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest Created successfully!',
+        data: result,
+    });
+}));
 const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     console.log({ ipnData });
@@ -158,6 +173,53 @@ const createCurrencyRequestIpn = (0, catchAsync_1.default)((req, res) => __await
         success: true,
         message: 'CurrencyRequest retrieved  successfully!',
         data: 'succes',
+    });
+}));
+const koraPayWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // const secretHash = config.flutterwave_hash;
+    // const signature = req.headers['verif-hash'];
+    // if (!signature || signature !== secretHash) {
+    //   // This request isn't from Flutterwave; discard
+    //   throw new ApiError(
+    //     httpStatus.BAD_REQUEST,
+    //     'Only allowed from flutterwave'
+    //   );
+    // }
+    const hash = crypto_1.default
+        .createHmac('sha256', config_1.default.koraApiSecretKey)
+        .update(JSON.stringify(req.body.data))
+        .digest('hex');
+    if (hash !== req.headers['x-korapay-signature']) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Only allowed from kora pay');
+    }
+    const ipnData = req.body;
+    console.log({ ipnData }, 'webhook kora pay');
+    if (ipnData.event === currencyRequest_interface_1.KoraPayEvent.PAYMENT_SUCCESS) {
+        console.log('kora pay succss');
+        if (ipnData.data.status === 'success') {
+            // const paymentReference = ipnData.data.reference;
+            // Perform additional actions, such as updating your database, sending emails, etc.
+            const paymentType = ipnData === null || ipnData === void 0 ? void 0 : ipnData.data.reference.split('__')[0];
+            if (paymentType === common_1.EPaymentType.addFunds) {
+                yield currencyRequest_service_1.CurrencyRequestService.koraPayWebHook(Object.assign({}, ipnData));
+            }
+            else if (paymentType === common_1.EPaymentType.seller) {
+                // await UpdateSellerAfterPay({
+                //   order_id: ipnData?.data.reference.split('__')[1],
+                //   payment_status: 'finished',
+                //   price_amount: config.sellerOneTimePayment,
+                // });
+            }
+        }
+    }
+    // eslint-disable-next-line no-console
+    console.log({ ipnData }, 'webhook');
+    // eslint-disable-next-line no-unused-vars
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest retrieved  successfully!',
+        data: 'success',
     });
 }));
 const getSingleCurrencyRequest = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -203,4 +265,6 @@ exports.CurrencyRequestController = {
     payStackWebHook,
     createCurrencyRequestWithFlutterwave,
     flutterwaveWebHook,
+    createCurrencyRequestWithKoraPay,
+    koraPayWebHook,
 };

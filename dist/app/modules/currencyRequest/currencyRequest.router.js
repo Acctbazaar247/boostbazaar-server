@@ -21,9 +21,11 @@ router.get('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRol
 // );
 router.post('/flutterwave', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithFlutterwave);
 router.post('/paystack', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithPayStack);
+router.post('/korapay', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestWithKoraPay);
 router.post('/nowpayment', (0, auth_1.default)(client_1.UserRole.user), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.createValidation), currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestInvoice);
 router.post('/webhook/paystack', currencyRequest_controller_1.CurrencyRequestController.payStackWebHook);
 router.post('/webhook/flutterwave', currencyRequest_controller_1.CurrencyRequestController.flutterwaveWebHook);
+router.post('/webhook/korapay', currencyRequest_controller_1.CurrencyRequestController.koraPayWebHook);
 router.post('/webhook/nowpayment', currencyRequest_controller_1.CurrencyRequestController.createCurrencyRequestIpn);
 router.patch('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), (0, validateRequest_1.default)(currencyRequest_validation_1.CurrencyRequestValidation.updateValidation), currencyRequest_controller_1.CurrencyRequestController.updateCurrencyRequest);
 router.delete('/:id', (0, auth_1.default)(client_1.UserRole.admin, client_1.UserRole.customerCare, client_1.UserRole.financeAdmin), currencyRequest_controller_1.CurrencyRequestController.deleteCurrencyRequest);

@@ -5,6 +5,7 @@ import ApiError from '../errors/ApiError';
 
 // Define the environment variables for security
 const KORA_API_BASE_URL = 'https://api.korapay.com/merchant/api/v1';
+// const KORA_API_BASE_URL = 'https://sandbox.korapay.com/merchant/api/v1';
 const KORA_API_SECRET_KEY = config.koraApiSecretKey;
 
 type CheckoutRequest = {
@@ -16,7 +17,6 @@ type CheckoutRequest = {
   description?: string; // Description of the transaction
   callbackUrl: string; // Callback URL for payment status updates
 };
-
 type CheckoutResponse = {
   checkoutUrl: string; // URL to redirect the user to
 };
@@ -24,6 +24,7 @@ type CheckoutResponse = {
 export const createKoraPayCheckout = async (
   request: CheckoutRequest
 ): Promise<CheckoutResponse> => {
+  console.log({ KORA_API_SECRET_KEY });
   try {
     // Endpoint for Kora Pay checkout
     const endpoint = `${KORA_API_BASE_URL}/charges/initialize`; // Update to the actual endpoint
