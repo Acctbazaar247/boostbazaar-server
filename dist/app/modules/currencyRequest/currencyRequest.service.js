@@ -249,7 +249,7 @@ const createCurrencyRequestWithKoraPay = (payload) => __awaiter(void 0, void 0, 
             customerName: result.ownBy.name,
             customerEmail: result.ownBy.email,
             reference: `${common_1.EPaymentType.addFunds}__${result.id}`,
-            callbackUrl: config_1.default.frontendUrl + 'account/wallet',
+            callbackUrl: config_1.default.frontendUrl + 'dashboard/deposit-history?tab=deposit',
         });
         console.log({ koraPay });
         // return { ...result, url: request.data.authorization_url || '' };

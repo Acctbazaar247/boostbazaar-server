@@ -1,12 +1,10 @@
 import { CurrencyRequest } from '@prisma/client';
-import crypto from 'crypto';
 import { Request, Response } from 'express';
 import { RequestHandler } from 'express-serve-static-core';
 import httpStatus from 'http-status';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../../../config';
 import { paginationFields } from '../../../constants/pagination';
-import ApiError from '../../../errors/ApiError';
 import flutterwavePaymentChecker from '../../../helpers/flutterwavePaymentChecker';
 import sendEmail from '../../../helpers/sendEmail';
 import { EPaymentType } from '../../../interfaces/common';
@@ -238,14 +236,14 @@ const koraPayWebHook: RequestHandler = catchAsync(
     //     'Only allowed from flutterwave'
     //   );
     // }
-    const hash = crypto
-      .createHmac('sha256', config.koraApiSecretKey)
-      .update(JSON.stringify(req.body.data))
-      .digest('hex');
+    // const hash = crypto
+    //   .createHmac('sha256', config.koraApiSecretKey)
+    //   .update(JSON.stringify(req.body.data))
+    //   .digest('hex');
 
-    if (hash !== req.headers['x-korapay-signature']) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Only allowed from kora pay');
-    }
+    // if (hash !== req.headers['x-korapay-signature']) {
+    //   throw new ApiError(httpStatus.BAD_REQUEST, 'Only allowed from kora pay');
+    // }
     const ipnData = req.body as TKoraPayWebhookResponse;
     console.log({ ipnData }, 'webhook kora pay');
     if (ipnData.event === KoraPayEvent.PAYMENT_SUCCESS) {
