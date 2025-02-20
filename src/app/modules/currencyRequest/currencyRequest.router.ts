@@ -46,6 +46,12 @@ router.post(
   CurrencyRequestController.createCurrencyRequestWithPayStack
 );
 router.post(
+  '/korapay',
+  auth(UserRole.user),
+  validateRequest(CurrencyRequestValidation.createValidation),
+  CurrencyRequestController.createCurrencyRequestWithKoraPay
+);
+router.post(
   '/nowpayment',
   auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),
@@ -57,6 +63,7 @@ router.post(
   '/webhook/flutterwave',
   CurrencyRequestController.flutterwaveWebHook
 );
+router.post('/webhook/korapay', CurrencyRequestController.koraPayWebHook);
 router.post(
   '/webhook/nowpayment',
   CurrencyRequestController.createCurrencyRequestIpn

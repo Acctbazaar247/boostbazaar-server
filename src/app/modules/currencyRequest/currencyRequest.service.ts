@@ -8,6 +8,7 @@ import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import UpdateCurrencyByRequestAfterPay from '../../../helpers/UpdateCurrencyByRequestAfterPay';
 import generateFlutterWavePaymentURL from '../../../helpers/createFlutterWaveInvoice';
+import { createKoraPayCheckout } from '../../../helpers/createKoraPayCheckout';
 import createNowPayInvoice from '../../../helpers/creeateInvoice';
 import nowPaymentChecker from '../../../helpers/nowPaymentChecker';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
@@ -21,6 +22,7 @@ import { currencyRequestSearchableFields } from './currencyRequest.constant';
 import {
   ICreateCurrencyRequestRes,
   ICurrencyRequestFilters,
+  TKoraPayWebhookResponse,
 } from './currencyRequest.interface';
 
 const getAllCurrencyRequest = async (
@@ -258,7 +260,39 @@ const flutterwaveWebHook = async (data: any): Promise<void> => {
     price_amount: isCurrencyRequestExits.amount,
   });
 };
+const createCurrencyRequestWithKoraPay = async (
+  payload: CurrencyRequest
+): Promise<ICreateCurrencyRequestRes | null> => {
+  const newCurrencyRequest = prisma.$transaction(async tx => {
+    const result = await tx.currencyRequest.create({
+      data: {
+        ...payload,
+        message: 'auto',
+        status: EStatusOfCurrencyRequest.pending,
+      },
+      include: {
+        ownBy: true,
+      },
+    });
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Invoie');
+    }
 
+    const koraPay = await createKoraPayCheckout({
+      amount: result.amount,
+      currency: 'NGN',
+      customerName: result.ownBy.name,
+      customerEmail: result.ownBy.email,
+      reference: `${EPaymentType.addFunds}__${result.id}`,
+      callbackUrl: config.frontendUrl + 'account/wallet',
+    });
+    console.log({ koraPay });
+    // return { ...result, url: request.data.authorization_url || '' };
+    return { ...result, url: koraPay.checkoutUrl };
+  });
+
+  return newCurrencyRequest;
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = async (data: any): Promise<void> => {
   const { order_id, payment_status, price_amount } = data;
@@ -367,6 +401,30 @@ const updateCurrencyRequest = async (
     return result;
   }
 };
+const koraPayWebHook = async (data: TKoraPayWebhookResponse): Promise<void> => {
+  console.log(data, 'from Kora pay wave');
+  const order_id = data.data.reference.split('__')[1];
+  console.log({ order_id });
+  const payment_status = 'finished';
+  const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({
+    where: { id: order_id },
+  });
+  if (!isCurrencyRequestExits) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'currency request not found!');
+  }
+  // change status of currency Request and add money to user
+  await UpdateCurrencyByRequestAfterPay({
+    order_id,
+    payment_status,
+    price_amount: isCurrencyRequestExits.amount,
+  });
+  // const result = await prisma.currencyRequest.findUnique({
+  //   where: {
+  //     id,
+  //   },
+  // });
+  // return result;
+};
 
 const deleteCurrencyRequest = async (
   id: string
@@ -392,4 +450,6 @@ export const CurrencyRequestService = {
   payStackWebHook,
   createCurrencyRequestWithFlutterwave,
   flutterwaveWebHook,
+  createCurrencyRequestWithKoraPay,
+  koraPayWebHook,
 };
