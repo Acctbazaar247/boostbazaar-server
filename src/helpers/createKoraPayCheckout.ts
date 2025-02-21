@@ -34,7 +34,7 @@ export const createKoraPayCheckout = async (
       Authorization: `Bearer ${KORA_API_SECRET_KEY}`,
       'Content-Type': 'application/json',
     };
-
+    console.log(`${config.baseServerUrl}/currency-request/webhook/korapay`);
     // Make the API request
     const response = await axios.post(
       endpoint,

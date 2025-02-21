@@ -32,6 +32,7 @@ const createKoraPayCheckout = (request) => __awaiter(void 0, void 0, void 0, fun
             Authorization: `Bearer ${KORA_API_SECRET_KEY}`,
             'Content-Type': 'application/json',
         };
+        console.log(`${config_1.default.baseServerUrl}/currency-request/webhook/korapay`);
         // Make the API request
         const response = yield axios_1.default.post(endpoint, {
             amount: request.currency === 'USD'
