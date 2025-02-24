@@ -13,9 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CurrencyRequestController = void 0;
+const crypto_1 = __importDefault(require("crypto"));
 const http_status_1 = __importDefault(require("http-status"));
 const config_1 = __importDefault(require("../../../config"));
 const pagination_1 = require("../../../constants/pagination");
+const ApiError_1 = __importDefault(require("../../../errors/ApiError"));
 const flutterwavePaymentChecker_1 = __importDefault(require("../../../helpers/flutterwavePaymentChecker"));
 const sendEmail_1 = __importDefault(require("../../../helpers/sendEmail"));
 const common_1 = require("../../../interfaces/common");
@@ -183,13 +185,13 @@ const koraPayWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0,
     //     'Only allowed from flutterwave'
     //   );
     // }
-    // const hash = crypto
-    //   .createHmac('sha256', config.koraApiSecretKey)
-    //   .update(JSON.stringify(req.body.data))
-    //   .digest('hex');
-    // if (hash !== req.headers['x-korapay-signature']) {
-    //   throw new ApiError(httpStatus.BAD_REQUEST, 'Only allowed from kora pay');
-    // }
+    const hash = crypto_1.default
+        .createHmac('sha256', config_1.default.koraApiSecretKey)
+        .update(JSON.stringify(req.body.data))
+        .digest('hex');
+    if (hash !== req.headers['x-korapay-signature']) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Only allowed from kora pay');
+    }
     const ipnData = req.body;
     console.log({ ipnData }, 'webhook kora pay');
     if (ipnData.event === currencyRequest_interface_1.KoraPayEvent.PAYMENT_SUCCESS) {
