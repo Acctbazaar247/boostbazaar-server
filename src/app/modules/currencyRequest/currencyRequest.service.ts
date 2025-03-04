@@ -466,7 +466,7 @@ const koraPayWebHook = async (data: TKoraPayWebhookResponse): Promise<void> => {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const OxWebHook = async (data: TOXWebhookResponse): Promise<void> => {
   console.log(data, 'from Ox');
-  const order_id = data.BillingID.split('_$_')[1];
+  const order_id = data.BillingID.split('__')[1];
   console.log({ order_id });
   const payment_status = 'finished';
   const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({
