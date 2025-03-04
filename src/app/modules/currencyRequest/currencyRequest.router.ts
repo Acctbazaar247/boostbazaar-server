@@ -52,6 +52,12 @@ router.post(
   CurrencyRequestController.createCurrencyRequestWithKoraPay
 );
 router.post(
+  '/ox-process',
+  auth(UserRole.user),
+  validateRequest(CurrencyRequestValidation.createOxValidation),
+  CurrencyRequestController.createCurrencyRequestWithOxProcess
+);
+router.post(
   '/nowpayment',
   auth(UserRole.user),
   validateRequest(CurrencyRequestValidation.createValidation),
@@ -64,6 +70,7 @@ router.post(
   CurrencyRequestController.flutterwaveWebHook
 );
 router.post('/webhook/korapay', CurrencyRequestController.koraPayWebHook);
+router.post('/webhook/ox-process', CurrencyRequestController.OxWebHook);
 router.post(
   '/webhook/nowpayment',
   CurrencyRequestController.createCurrencyRequestIpn

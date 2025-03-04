@@ -26,7 +26,7 @@ const OxPaymentInvoice = async (
     Email: params.email,
     ClientId: params.clientId,
     MerchantId: config.oxAPIKey,
-    BillingID: `${params.paymentType}_$_${params.billingId}`,
+    BillingID: `${params.paymentType}__${params.billingId}`,
     Test: test.toString(),
     ReturnUrl: true.toString(),
     CancelUrl: params.redirectUrl.toString(),

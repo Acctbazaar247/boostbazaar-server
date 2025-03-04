@@ -18,8 +18,10 @@ import prisma from '../../../shared/prisma';
 import sendResponse from '../../../shared/sendResponse';
 import { currencyRequestFilterAbleFields } from './currencyRequest.constant';
 import {
+  EOxWebhookStatus,
   KoraPayEvent,
   TKoraPayWebhookResponse,
+  TOXWebhookResponse,
 } from './currencyRequest.interface';
 import { CurrencyRequestService } from './currencyRequest.service';
 const createCurrencyRequest: RequestHandler = catchAsync(
@@ -186,6 +188,24 @@ const createCurrencyRequestWithKoraPay: RequestHandler = catchAsync(
     });
   }
 );
+const createCurrencyRequestWithOxProcess: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    const CurrencyRequestData = req.body;
+    const user = req.user as JwtPayload;
+
+    const result =
+      await CurrencyRequestService.createCurrencyRequestWithOxProcess({
+        ...CurrencyRequestData,
+        ownById: user.userId,
+      });
+    sendResponse<CurrencyRequest>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'CurrencyRequest Created successfully!',
+      data: result,
+    });
+  }
+);
 const flutterwaveWebHook: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const ipnData = req.body;
@@ -297,6 +317,70 @@ const getSingleCurrencyRequest: RequestHandler = catchAsync(
   }
 );
 
+const OxWebHook: RequestHandler = catchAsync(
+  async (req: Request, res: Response) => {
+    console.log('revcive OX webhook ---- and now checking');
+    // const secretHash = config.flutterwave_hash;
+    // const signature = req.headers['verif-hash'];
+    // if (!signature || signature !== secretHash) {
+    //   // This request isn't from Flutterwave; discard
+    //   throw new ApiError(
+    //     httpStatus.BAD_REQUEST,
+    //     'Only allowed from flutterwave'
+    //   );
+    // }
+    const ipnData = req.body as TOXWebhookResponse;
+    const WEBHOOK_PASSWORD = config.oxProcessingWebHookPassword;
+    const { PaymentId, MerchantId, Email, Currency, Signature } = req.body;
+
+    // Check that all required fields exist
+    if (!PaymentId || !MerchantId || !Email || !Currency || !Signature) {
+      console.error('Missing required parameters for signature verification.');
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        'Only allowed from oxProcessing'
+      );
+    }
+    const dataString = `${PaymentId}:${MerchantId}:${Email}:${Currency}:${WEBHOOK_PASSWORD}`;
+    console.log('Data string to hash:', dataString);
+
+    // Compute the MD5 hash of the string
+    const computedHash = crypto
+      .createHash('md5')
+      .update(dataString)
+      .digest('hex');
+    console.log('Computed hash:', computedHash);
+    console.log('Received signature:', Signature);
+
+    // Compare the computed hash with the signature from the request
+    console.log(computedHash === Signature, 'this is the result of comparison');
+    // break if not same
+    if (computedHash !== Signature) {
+      throw new ApiError(
+        httpStatus.BAD_REQUEST,
+        'Only allowed from oxProcessing'
+      );
+    }
+    console.log({ ipnData }, 'webhook');
+    if (ipnData.Status === EOxWebhookStatus.Success) {
+      // const paymentReference = ipnData.data.reference;
+      console.log('i am in webhook inner', ipnData);
+      // Perform additional actions, such as updating your database, sending emails, etc.
+      const paymentType = ipnData?.BillingID.split('__')[0];
+      if (paymentType === EPaymentType.addFunds) {
+        await CurrencyRequestService.OxWebHook(ipnData);
+      }
+    }
+
+    sendResponse<string>(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'CurrencyRequest retrieved  successfully!',
+      data: 'success',
+    });
+  }
+);
+
 const updateCurrencyRequest: RequestHandler = catchAsyncSemaphore(
   async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -343,4 +427,6 @@ export const CurrencyRequestController = {
   flutterwaveWebHook,
   createCurrencyRequestWithKoraPay,
   koraPayWebHook,
+  createCurrencyRequestWithOxProcess,
+  OxWebHook,
 };

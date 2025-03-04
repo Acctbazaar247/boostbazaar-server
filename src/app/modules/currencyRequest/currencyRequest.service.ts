@@ -6,6 +6,7 @@ import {
 import httpStatus from 'http-status';
 import config from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import OxPaymentInvoice from '../../../helpers/OxPaymentInvoice';
 import UpdateCurrencyByRequestAfterPay from '../../../helpers/UpdateCurrencyByRequestAfterPay';
 import generateFlutterWavePaymentURL from '../../../helpers/createFlutterWaveInvoice';
 import { createKoraPayCheckout } from '../../../helpers/createKoraPayCheckout';
@@ -20,9 +21,11 @@ import EmailTemplates from '../../../shared/EmailTemplates';
 import prisma from '../../../shared/prisma';
 import { currencyRequestSearchableFields } from './currencyRequest.constant';
 import {
+  CurrencyRequestPayloadForOx,
   ICreateCurrencyRequestRes,
   ICurrencyRequestFilters,
   TKoraPayWebhookResponse,
+  TOXWebhookResponse,
 } from './currencyRequest.interface';
 
 const getAllCurrencyRequest = async (
@@ -293,6 +296,40 @@ const createCurrencyRequestWithKoraPay = async (
 
   return newCurrencyRequest;
 };
+const createCurrencyRequestWithOxProcess = async (
+  payload: CurrencyRequestPayloadForOx
+): Promise<ICreateCurrencyRequestRes | null> => {
+  const { currency, ...rest } = payload;
+  const newCurrencyRequest = prisma.$transaction(async tx => {
+    const result = await tx.currencyRequest.create({
+      data: {
+        ...rest,
+        message: 'auto',
+        status: EStatusOfCurrencyRequest.pending,
+      },
+      include: {
+        ownBy: true,
+      },
+    });
+    if (!result) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Invoie');
+    }
+
+    const dataUrl = await OxPaymentInvoice({
+      amountUsd: result.amount,
+      email: result.ownBy.email,
+      clientId: result.ownBy.id,
+      billingId: result.id,
+      currency,
+      paymentType: EPaymentType.addFunds,
+      redirectUrl: config.frontendUrl + 'dashboard/deposit-history?tab=deposit',
+    });
+    // return { ...result, url: request.data.authorization_url || '' };
+    return { ...result, url: dataUrl };
+  });
+
+  return newCurrencyRequest;
+};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const createCurrencyRequestIpn = async (data: any): Promise<void> => {
   const { order_id, payment_status, price_amount } = data;
@@ -426,6 +463,32 @@ const koraPayWebHook = async (data: TKoraPayWebhookResponse): Promise<void> => {
   // return result;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const OxWebHook = async (data: TOXWebhookResponse): Promise<void> => {
+  console.log(data, 'from Ox');
+  const order_id = data.BillingID.split('_$_')[1];
+  console.log({ order_id });
+  const payment_status = 'finished';
+  const isCurrencyRequestExits = await prisma.currencyRequest.findUnique({
+    where: { id: order_id },
+  });
+  if (!isCurrencyRequestExits) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'currency request not found!');
+  }
+  // change status of currency Request and add money to user
+  await UpdateCurrencyByRequestAfterPay({
+    order_id,
+    payment_status,
+    price_amount: isCurrencyRequestExits.amount,
+  });
+  // const result = await prisma.currencyRequest.findUnique({
+  //   where: {
+  //     id,
+  //   },
+  // });
+  // return result;
+};
+
 const deleteCurrencyRequest = async (
   id: string
 ): Promise<CurrencyRequest | null> => {
@@ -452,4 +515,6 @@ export const CurrencyRequestService = {
   flutterwaveWebHook,
   createCurrencyRequestWithKoraPay,
   koraPayWebHook,
+  createCurrencyRequestWithOxProcess,
+  OxWebHook,
 };

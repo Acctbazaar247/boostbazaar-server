@@ -144,6 +144,17 @@ const createCurrencyRequestWithKoraPay = (0, catchAsync_1.default)((req, res) =>
         data: result,
     });
 }));
+const createCurrencyRequestWithOxProcess = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const CurrencyRequestData = req.body;
+    const user = req.user;
+    const result = yield currencyRequest_service_1.CurrencyRequestService.createCurrencyRequestWithOxProcess(Object.assign(Object.assign({}, CurrencyRequestData), { ownById: user.userId }));
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest Created successfully!',
+        data: result,
+    });
+}));
 const flutterwaveWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const ipnData = req.body;
     console.log({ ipnData });
@@ -232,6 +243,57 @@ const getSingleCurrencyRequest = (0, catchAsync_1.default)((req, res) => __await
         data: result,
     });
 }));
+const OxWebHook = (0, catchAsync_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('revcive OX webhook ---- and now checking');
+    // const secretHash = config.flutterwave_hash;
+    // const signature = req.headers['verif-hash'];
+    // if (!signature || signature !== secretHash) {
+    //   // This request isn't from Flutterwave; discard
+    //   throw new ApiError(
+    //     httpStatus.BAD_REQUEST,
+    //     'Only allowed from flutterwave'
+    //   );
+    // }
+    const ipnData = req.body;
+    const WEBHOOK_PASSWORD = config_1.default.oxProcessingWebHookPassword;
+    const { PaymentId, MerchantId, Email, Currency, Signature } = req.body;
+    // Check that all required fields exist
+    if (!PaymentId || !MerchantId || !Email || !Currency || !Signature) {
+        console.error('Missing required parameters for signature verification.');
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Only allowed from oxProcessing');
+    }
+    const dataString = `${PaymentId}:${MerchantId}:${Email}:${Currency}:${WEBHOOK_PASSWORD}`;
+    console.log('Data string to hash:', dataString);
+    // Compute the MD5 hash of the string
+    const computedHash = crypto_1.default
+        .createHash('md5')
+        .update(dataString)
+        .digest('hex');
+    console.log('Computed hash:', computedHash);
+    console.log('Received signature:', Signature);
+    // Compare the computed hash with the signature from the request
+    console.log(computedHash === Signature, 'this is the result of comparison');
+    // break if not same
+    if (computedHash !== Signature) {
+        throw new ApiError_1.default(http_status_1.default.BAD_REQUEST, 'Only allowed from oxProcessing');
+    }
+    console.log({ ipnData }, 'webhook');
+    if (ipnData.Status === currencyRequest_interface_1.EOxWebhookStatus.Success) {
+        // const paymentReference = ipnData.data.reference;
+        console.log('i am in webhook inner', ipnData);
+        // Perform additional actions, such as updating your database, sending emails, etc.
+        const paymentType = ipnData === null || ipnData === void 0 ? void 0 : ipnData.BillingID.split('__')[0];
+        if (paymentType === common_1.EPaymentType.addFunds) {
+            yield currencyRequest_service_1.CurrencyRequestService.OxWebHook(ipnData);
+        }
+    }
+    (0, sendResponse_1.default)(res, {
+        statusCode: http_status_1.default.OK,
+        success: true,
+        message: 'CurrencyRequest retrieved  successfully!',
+        data: 'success',
+    });
+}));
 const updateCurrencyRequest = (0, catchAsyncSemaphore_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = req.params.id;
     const updateAbleData = req.body;
@@ -267,4 +329,6 @@ exports.CurrencyRequestController = {
     flutterwaveWebHook,
     createCurrencyRequestWithKoraPay,
     koraPayWebHook,
+    createCurrencyRequestWithOxProcess,
+    OxWebHook,
 };

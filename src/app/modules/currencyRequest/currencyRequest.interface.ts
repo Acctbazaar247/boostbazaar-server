@@ -24,7 +24,10 @@ export enum KoraPayEvent {
   // eslint-disable-next-line no-unused-vars
   REFUND_FAILED = 'refund.failed',
 }
-
+export type CurrencyRequestPayloadForOx = {
+  pay_currency_btc: boolean | undefined;
+  currency: string;
+} & CurrencyRequest;
 export type TKoraPayWebhookResponse = {
   event: KoraPayEvent; // The type of event, e.g., "payment.success"
   data: {
@@ -40,4 +43,28 @@ export type TKoraPayWebhookResponse = {
     metadata?: Record<string, any>; // Additional metadata sent during the checkout request
   };
   timestamp: string; // The timestamp of the event
+};
+
+export enum EOxWebhookStatus {
+  Success = 'Success',
+  Pending = 'Pending',
+  Failed = 'Failed',
+}
+
+export type TOXWebhookResponse = {
+  PaymentId: number;
+  MerchantId: string;
+  Amount: number;
+  TotalAmount: number;
+  Currency: string;
+  Email: string;
+  Status: EOxWebhookStatus; // Assuming these are possible statuses
+  Signature: string;
+  BillingID: string;
+  AmountUSD: number;
+  TotalAmountUSD: number;
+  Insufficient: boolean;
+  Test: boolean;
+  ClientId: string;
+  TxHashes: string[];
 };

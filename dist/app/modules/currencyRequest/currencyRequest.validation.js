@@ -9,6 +9,13 @@ const createValidation = zod_1.z.object({
         message: zod_1.z.string({ required_error: 'message is required' }).optional(),
     }),
 });
+const createOxValidation = zod_1.z.object({
+    body: zod_1.z.object({
+        amount: zod_1.z.number({ required_error: 'amount is required' }).min(0),
+        currency: zod_1.z.string({ required_error: 'currency is required' }),
+        message: zod_1.z.string({ required_error: 'message is required' }).optional(),
+    }),
+});
 const updateValidation = zod_1.z.object({
     body: zod_1.z.object({
         amount: zod_1.z
@@ -22,4 +29,5 @@ const updateValidation = zod_1.z.object({
 exports.CurrencyRequestValidation = {
     createValidation,
     updateValidation,
+    createOxValidation,
 };

@@ -43,4 +43,6 @@ exports.default = {
     japPercentage: parseFloat(process.env.JAP_RATE_PERCENTAGE),
     manualDollarRate: parseFloat(process.env.MANUAL_DOLLAR_RATE),
     koraApiSecretKey: process.env.KORA_API_SECRET_KEY,
+    oxAPIKey: process.env.OX_MERCHANT_KEY,
+    oxProcessingWebHookPassword: process.env.OX_WEBHOOK_PASSWORD,
 };
