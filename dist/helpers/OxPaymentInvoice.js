@@ -19,7 +19,7 @@ const ApiError_1 = __importDefault(require("../errors/ApiError"));
 const OxPaymentInvoice = (params) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const endpoint = 'https://app.0xprocessing.com/Payment';
-    const test = true;
+    const test = false;
     const payload = {
         AmountUSD: params.amountUsd.toString(),
         Currency: params.currency,

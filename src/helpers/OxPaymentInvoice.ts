@@ -19,7 +19,7 @@ const OxPaymentInvoice = async (
   params: CreatePaymentParams
 ): Promise<string> => {
   const endpoint = 'https://app.0xprocessing.com/Payment';
-  const test = true;
+  const test = false;
   const payload = {
     AmountUSD: params.amountUsd.toString(),
     Currency: params.currency,
